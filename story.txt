@@ -1,5 +1,15 @@
 Adam wakes up in the morning.
 He brushes his teeth. 
 He has breakfast.
+<<<<<<< HEAD
 Then he watched Youtube.
 He goes to class.
+=======
+Then he opens Instagram.
+<<<<<<< HEAD
+People are talking.
+They are being noisy.
+=======
+He goes to class.
+>>>>>>> main
+>>>>>>> at-the-class
