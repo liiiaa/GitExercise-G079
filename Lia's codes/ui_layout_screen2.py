@@ -3,7 +3,8 @@ import os
 
 WIDTH, HEIGHT = 1920, 1080
 ASSETS_PATH = os.path.join("GitExercise", "Assets") 
-SUB_FOLDER = "Levels Assets" 
+LEVELS_FOLDER = "Levels Assets" 
+BUTTONS_FOLDER = "Buttons Assets"
 
 def get_level_ui_layout():
     layout = {}
@@ -29,11 +30,19 @@ def load_assets():
     my_files = ['Vanilla_LVL.png', 'Choco_LVL.png', 'Strawb_LVL.png', 'Mint_LVL.png']
     
     try:
+        assets['background'] = pygame.image.load(os.path.join(ASSETS_PATH, 'Background.png')).convert_alpha()
+
         assets['scoop_images'] = []
         for filename in my_files:
-            path = os.path.join(ASSETS_PATH, SUB_FOLDER, filename)
+            path = os.path.join(ASSETS_PATH, LEVELS_FOLDER, filename)
             img = pygame.image.load(path).convert_alpha()
             assets['scoop_images'].append(pygame.transform.smoothscale(img, (400, 400)))
+
+        assets['back_button'] = pygame.image.load(os.path.join(ASSETS_PATH, BUTTONS_FOLDER, 'Back button.png')).convert_alpha()
+        assets['back_button'] = pygame.transform.smoothscale(assets['back_button'], (350, 150))
+
+        assets['next_button'] = pygame.image.load(os.path.join(ASSETS_PATH, BUTTONS_FOLDER, 'Next button.png')).convert_alpha()
+        assets['next_button'] = pygame.transform.smoothscale(assets['next_button'], (350, 150))
             
         assets['font'] = pygame.font.SysFont('Cooper Black', 110, bold=True)
         assets['btn_font'] = pygame.font.SysFont('Cooper Black', 40, bold=True)
@@ -77,12 +86,23 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
         screen.blit(outline_surf, (text_rect.x + off, text_rect.y + off))
         screen.blit(text_surf, text_rect)
 
-    for btn_key, label in [('prev_btn', 'BACK'), ('next_btn', 'NEXT')]:
-        btn_rect = layout[btn_key]
-        color = (180, 180, 180) if btn_rect.collidepoint(mouse_pos) else (100, 100, 100)
-        pygame.draw.rect(screen, color, btn_rect, border_radius=20)
-        btn_text = assets['btn_font'].render(label, True, (255, 255, 255))
-        screen.blit(btn_text, btn_text.get_rect(center=btn_rect.center))
+    prev_rect = layout['prev_btn']
+    if prev_rect.collidepoint(mouse_pos):
+        hover_surf = pygame.Surface(assets['back_button'].get_size(), pygame.SRCALPHA)
+        hover_surf.set_alpha(150)
+        hover_surf.blit(assets['back_button'], (0, 0))
+        screen.blit(hover_surf, prev_rect.topleft)
+    else:
+        screen.blit(assets['back_button'], prev_rect.topleft)
+
+    next_rect = layout['next_btn']
+    if next_rect.collidepoint(mouse_pos):
+        hover_surf = pygame.Surface(assets['next_button'].get_size(), pygame.SRCALPHA)
+        hover_surf.set_alpha(150)
+        hover_surf.blit(assets['next_button'], (0, 0))
+        screen.blit(hover_surf, next_rect.topleft)
+    else:
+        screen.blit(assets['next_button'], next_rect.topleft)
 
 
 def test_selection_ui():
@@ -99,7 +119,10 @@ def test_selection_ui():
 
     running = True
     while running:
-        screen.fill((40, 40, 40)) 
+        if all_assets and 'background' in all_assets:
+            screen.blit(all_assets['background'], (0, 0))
+        else:
+            screen.fill((50, 50, 50))
         mouse_pos = pygame.mouse.get_pos()
         layout = get_level_ui_layout()
         

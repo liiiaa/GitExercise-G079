@@ -4,56 +4,56 @@ import pygame
 import os
 
 BASE_DIR = os.path.dirname(__file__)
-ASSETS_PATH = os.path.join(BASE_DIR,'..', 'Assets')
+ASSETS_PATH = os.path.join(BASE_DIR, '..', 'Assets')
+SUB_FOLDER = "Buttons Assets"
 WIDTH, HEIGHT = 1920, 1200
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 
 def load_assets():
     assets = {}
     try:
+        assets['background'] = pygame.image.load(os.path.join(ASSETS_PATH, 'Background.png')).convert_alpha()
+        
         logo = pygame.image.load(os.path.join(ASSETS_PATH, 'Game Logo.png')).convert_alpha()
-        assets['logo'] = pygame.transform.smoothscale(logo, (600, 600))
+        assets['logo'] = pygame.transform.smoothscale(logo, (900, 900))
 
-        start_img = pygame.image.load(os.path.join(ASSETS_PATH, 'Start button.png')).convert_alpha()
-        assets['start_button'] = pygame.transform.smoothscale(start_img, (400, 150))
+        start_img = pygame.image.load(os.path.join(ASSETS_PATH, SUB_FOLDER, 'Start button.png')).convert_alpha()
+        assets['start_button'] = pygame.transform.smoothscale(start_img, (500, 250))
 
         return assets
     except Exception as e:
-        print(f"Error loading assets: {e}. Please check the filename in the assets folder.")
+        print(f"Error: {e}")
         return None
 
-def draw_button_img(screen, rect, image, is_hovered):
-    if is_hovered:
-        surf = pygame.Surface(image.get_size(), pygame.SRCALPHA)
-        surf.set_alpha(150)  
-        surf.blit(image, (0, 0))
-        screen.blit(surf, (rect.x, rect.y))
-    else:
-        screen.blit(image, (rect.x, rect.y))
-    
 def test_ui():
     pygame.init()
-    screen = pygame.display.set_mode((1920, 1200))
-    pygame.display.set_caption("A Scoop of Spring - UI Test")
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("A Scoop of Spring")
+    
     all_assets = load_assets()
-    start_button_rect = pygame.Rect(760, 700, 400, 150)
-    logo_position = (660, 150)
+    if not all_assets:
+        return
+
+    logo_rect = all_assets['logo'].get_rect(center=(WIDTH // 2, 450))
+    start_button_rect = all_assets['start_button'].get_rect(center=(WIDTH // 2, 900))
 
     clock = pygame.time.Clock()
     running = True
+    
     while running:
-        screen.fill(WHITE)
+        screen.fill((255, 253, 240))
+        
         mouse_pos = pygame.mouse.get_pos()
         is_hovered = start_button_rect.collidepoint(mouse_pos)
 
-        if all_assets:
-            if 'logo' in all_assets:
-                screen.blit(all_assets['logo'], logo_position)
+        screen.blit(all_assets['background'], (0, 0))
+        screen.blit(all_assets['logo'], logo_rect)
 
-            if 'start_button' in all_assets:
-                draw_button_img(screen, start_button_rect, all_assets['start_button'], is_hovered)
+        if is_hovered:
+            hover_surf = all_assets['start_button'].copy()
+            hover_surf.fill((255, 255, 255, 50), special_flags=pygame.BLEND_RGBA_ADD)
+            screen.blit(hover_surf, start_button_rect)
+        else:
+            screen.blit(all_assets['start_button'], start_button_rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -61,7 +61,7 @@ def test_ui():
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if is_hovered:
-                    print("Start button is clicked!")
+                    print("Start button clicked!")
 
         pygame.display.flip()
         clock.tick(60)
