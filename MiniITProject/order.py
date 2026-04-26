@@ -1,11 +1,10 @@
 import random
 
-orders = [
-    "Vanilla Ice Cream",
-    "Chocolate Milkshake",
-    "Strawberry Ice Cream",
-    "Choco Mint Ice Cream"
-]
+flavors = ["Vanilla", "Chocolate", "Strawberry"]
+toppings = ["Sprinkles", "Chocolate Chips", "Fruit"]
 
 def generate_order():
-    return random.choice(orders)
+    return {
+        "flavor": random.choice(flavors),
+        "toppings": random.sample(toppings, k=random.randint(1, 2))
+    }
