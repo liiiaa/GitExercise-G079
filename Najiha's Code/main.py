@@ -21,7 +21,7 @@ current_order = random.choice(orders)
 timer = 10
 clock = pygame.time.Clock()
 
-# SAFE BUTTON INIT (IMPORTANT)
+
 start_btn = None
 next_btn = None
 level1_btn = None
@@ -50,7 +50,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        # MOUSE CLICK
+        
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
 
@@ -79,7 +79,7 @@ while running:
                     timer = 10
                     current_order = random.choice(orders)
 
-        # KEY PRESS
+        
         if event.type == pygame.KEYDOWN:
             if scene == 5:
                 current_order = random.choice(orders)
