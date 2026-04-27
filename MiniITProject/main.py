@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+from order import generate_order
 
 pygame.init()
 
@@ -14,11 +15,12 @@ font_small = pygame.font.SysFont(None, 40)
 
 scene = 1
 
-orders = ["Vanilla Ice Cream", "Chocolate Milkshake", "Strawberry Ice Cream", "Choco Mint Ice Cream"]
-current_order = random.choice(orders)
+
+current_order = generate_order()
 
 timer = 10  # testing
 clock = pygame.time.Clock()
+
 
 
 def draw_text_center(text, font, y, color=(255,255,255)):
@@ -58,7 +60,7 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if scene == 4:
-                current_order = random.choice(orders)
+                current_order = generate_order()
                 timer = 10
 
 
@@ -85,10 +87,12 @@ while running:
 
 
     elif scene == 4:
+        timer -= clock.get_time() / 1000
         draw_text_center("GAMEPLAY", font_big, 200)
 
         draw_text_center("Customer Order:", font_medium, 350)
-        draw_text_center(current_order, font_medium, 420)
+        order_text = f"{current_order['flavor']} with {', '.join(current_order['toppings'])}"
+        draw_text_center(order_text, font_medium, 420)
 
         draw_text_center("Press ANY KEY to complete order", font_small, 550)
 
@@ -97,6 +101,7 @@ while running:
         draw_text_center(f"Time Left: {int(timer)}", font_medium, 650)
 
         if timer <= 0:
+            timer = 0
             draw_text_center("FAILED! Time Up!", font_medium, 750, (255, 100, 100))
 
     pygame.display.flip()
