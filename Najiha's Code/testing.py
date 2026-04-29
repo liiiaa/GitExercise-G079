@@ -157,7 +157,7 @@ while running:
 
     # Scene 3 (Level Select)
     elif scene == 3:
-        draw_text_center("SELECT LEVEL", font_big, 180)
+        draw_text_center("SELECT LEVEL", font_big, 350)
 
         start_y = HEIGHT//2 - 150
 
@@ -252,7 +252,7 @@ while running:
 
     # Scene 6 (Result Screen)
     elif scene == 6:
-        draw_text_center("RESULT", font_big, 180)
+        draw_text_center("RESULT", font_big, 210)
         draw_text_center(f"Score: {order_count}/{max_orders}", font_medium, 280)
 
         start_y = 420
