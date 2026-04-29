@@ -20,14 +20,14 @@ BOX_H = 85
 BOX_GAP = 25
 CENTER_X = WIDTH // 2
 
-# Game state
+# Game
 scene = 1
 selected_level = 1
 
 max_levels = 3
 unlocked_level = 1
 
-flavours = ["Vanilla", "Chocolate", "StrawberrY", "Choco MinT"]
+flavours = ["Vanilla", "Chocolate", "Strawberry", "Choco Mint"]
 toppings = ["Sprinkles", "Choco chips"]
 containers = ["Cone", "Cup"]
 
@@ -58,7 +58,7 @@ def draw_box(text, rect, color=(255,255,255), text_color=(0,0,0), font=font_smal
     img = font.render(text, True, text_color)
     text_rect = img.get_rect(center=rect.center)
 
-    # auto shrink kalau text panjang
+    # shrink the text
     if text_rect.width > rect.width - 20:
         font2 = pygame.font.SysFont(None, 30)
         img = font2.render(text, True, text_color)
@@ -89,7 +89,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
 
-            # Scene 1
+            # Scene 1 
             if scene == 1 and start_btn and start_btn.collidepoint(mx, my):
                 scene = 2
 
@@ -97,7 +97,7 @@ while running:
             elif scene == 2 and next_btn and next_btn.collidepoint(mx, my):
                 scene = 3
 
-            # Scene 3 (Select Level)
+            # Scene 3 (Level Select)
             elif scene == 3:
 
                 if level1_btn and level1_btn.collidepoint(mx, my):
@@ -112,7 +112,7 @@ while running:
                     selected_level = 3
                     scene = 4
 
-            # Scene 4 (Start the level)
+            # Scene 4 (Start Level)
             elif scene == 4 and play_btn and play_btn.collidepoint(mx, my):
                 scene = 5
                 current_order = generate_order(selected_level)
@@ -120,13 +120,13 @@ while running:
                 order_count = 0
                 timer = 10
 
-            # Scene 5 (Click the boxes)
+            # Scene 5 (Game Scene)
             elif scene == 5:
                 for b_type, value, rect in buttons:
                     if rect.collidepoint(mx, my):
                         player_choice[b_type] = value
 
-            # Scene 6 (Result)
+            # Scene 6 (Result Screen)
             elif scene == 6:
 
                 if replay_btn and replay_btn.collidepoint(mx, my):
@@ -150,12 +150,12 @@ while running:
     # Scene 2
     elif scene == 2:
         draw_text_center("STORY", font_big, 300)
-        draw_text_center("Serve ice cream fast & correctly!", font_medium, 450)
+        draw_text_center("bla bla bla bla", font_medium, 450)
 
         next_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
         draw_box("NEXT", next_btn)
 
-    # Scene 3 (Select Level)
+    # Scene 3 (Level Select)
     elif scene == 3:
         draw_text_center("SELECT LEVEL", font_big, 180)
 
@@ -192,7 +192,7 @@ while running:
         play_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
         draw_box("PLAY", play_btn)
 
-    # Scene 5 (Game Screen)
+    # Scene 5 (Game Scene)
     elif scene == 5:
         draw_text_center(f"LEVEL {selected_level}", font_small, 100)
         draw_text_center("ORDER", font_medium, 200)
