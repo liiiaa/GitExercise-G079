@@ -9,18 +9,25 @@ WIDTH, HEIGHT = 1920, 1200
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("A Scoop of Spring")
 
+# Fonts
 font_big = pygame.font.SysFont(None, 100)
 font_medium = pygame.font.SysFont(None, 60)
 font_small = pygame.font.SysFont(None, 40)
 
-# ===================== GAME STATE =====================
+# UI Config
+BOX_W = 420
+BOX_H = 85
+BOX_GAP = 25
+CENTER_X = WIDTH // 2
+
+# Game state
 scene = 1
 selected_level = 1
 
 max_levels = 3
 unlocked_level = 1
 
-flavours = ["Vanilla Ice Cream", "Chocolate Milkshake", "Strawberry Ice Cream", "Choco Mint Ice Cream"]
+flavours = ["Vanilla", "Chocolate", "StrawberrY", "Choco MinT"]
 toppings = ["Sprinkles", "Choco chips"]
 containers = ["Cone", "Cup"]
 
@@ -38,17 +45,26 @@ level1_btn = level2_btn = level3_btn = None
 play_btn = replay_btn = home_btn = next_btn_result = None
 
 
-# ===================== UI HELPERS =====================
-def draw_text_center(text, font, y, color=(255, 255, 255)):
+# Function
+def draw_text_center(text, font, y, color=(255,255,255)):
     img = font.render(text, True, color)
-    rect = img.get_rect(center=(WIDTH // 2, y))
+    rect = img.get_rect(center=(WIDTH//2, y))
     screen.blit(img, rect)
 
 
-def draw_box(text, rect, color=(255, 255, 255), text_color=(0, 0, 0), font=font_small):
-    pygame.draw.rect(screen, color, rect, border_radius=15)
+def draw_box(text, rect, color=(255,255,255), text_color=(0,0,0), font=font_small):
+    pygame.draw.rect(screen, color, rect, border_radius=18)
+
     img = font.render(text, True, text_color)
-    screen.blit(img, img.get_rect(center=rect.center))
+    text_rect = img.get_rect(center=rect.center)
+
+    # auto shrink kalau text panjang
+    if text_rect.width > rect.width - 20:
+        font2 = pygame.font.SysFont(None, 30)
+        img = font2.render(text, True, text_color)
+        text_rect = img.get_rect(center=rect.center)
+
+    screen.blit(img, text_rect)
 
 
 def generate_order(level):
@@ -60,7 +76,7 @@ def generate_order(level):
     return order
 
 
-# ===================== GAME LOOP =====================
+# Loop
 running = True
 while running:
     dt = clock.tick(60) / 1000
@@ -73,15 +89,15 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = pygame.mouse.get_pos()
 
-            # -------- START --------
+            # Scene 1
             if scene == 1 and start_btn and start_btn.collidepoint(mx, my):
                 scene = 2
 
-            # -------- STORY --------
+            # Scene 2
             elif scene == 2 and next_btn and next_btn.collidepoint(mx, my):
                 scene = 3
 
-            # -------- LEVEL SELECT --------
+            # Scene 3 (Select Level)
             elif scene == 3:
 
                 if level1_btn and level1_btn.collidepoint(mx, my):
@@ -96,7 +112,7 @@ while running:
                     selected_level = 3
                     scene = 4
 
-            # -------- PLAY --------
+            # Scene 4 (Start the level)
             elif scene == 4 and play_btn and play_btn.collidepoint(mx, my):
                 scene = 5
                 current_order = generate_order(selected_level)
@@ -104,13 +120,13 @@ while running:
                 order_count = 0
                 timer = 10
 
-            # -------- GAME --------
+            # Scene 5 (Click the boxes)
             elif scene == 5:
                 for b_type, value, rect in buttons:
                     if rect.collidepoint(mx, my):
                         player_choice[b_type] = value
 
-            # -------- RESULT --------
+            # Scene 6 (Result)
             elif scene == 6:
 
                 if replay_btn and replay_btn.collidepoint(mx, my):
@@ -123,37 +139,37 @@ while running:
                     selected_level += 1
                     scene = 4
 
-    # ===================== SCENE 1 =====================
+    # Scene 1
     if scene == 1:
-        draw_text_center("A Scoop of Spring", font_big, 400)
-        draw_text_center("Welcome!", font_medium, 500)
-        start_btn = pygame.Rect(WIDTH//2 - 150, 650, 300, 80)
+        draw_text_center("A Scoop of Spring", font_big, 380)
+        draw_text_center("Welcome!", font_medium, 480)
+
+        start_btn = pygame.Rect(CENTER_X - BOX_W//2, 650, BOX_W, BOX_H)
         draw_box("START", start_btn)
 
-    # ===================== SCENE 2 =====================
+    # Scene 2
     elif scene == 2:
         draw_text_center("STORY", font_big, 300)
-        draw_text_center("Welcome to Ice Cream Game!", font_medium, 450)
-        next_btn = pygame.Rect(WIDTH//2 - 150, 700, 300, 80)
+        draw_text_center("Serve ice cream fast & correctly!", font_medium, 450)
+
+        next_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
         draw_box("NEXT", next_btn)
 
-    # ===================== LEVEL SELECT =====================
+    # Scene 3 (Select Level)
     elif scene == 3:
-        draw_text_center("SELECT LEVEL", font_big, 200)
+        draw_text_center("SELECT LEVEL", font_big, 180)
 
-        box_w, box_h = 350, 80
-        gap = 25
-        start_y = HEIGHT // 2 - 150
+        start_y = HEIGHT//2 - 150
 
         level1_btn = level2_btn = level3_btn = None
 
-        for i in range(1, max_levels + 1):
+        for i in range(1, max_levels+1):
 
             rect = pygame.Rect(
-                WIDTH//2 - box_w//2,
-                start_y + (i-1)*(box_h + gap),
-                box_w,
-                box_h
+                CENTER_X - BOX_W//2,
+                start_y + (i-1)*(BOX_H + BOX_GAP),
+                BOX_W,
+                BOX_H
             )
 
             if i <= unlocked_level:
@@ -168,17 +184,16 @@ while running:
             elif i == 3:
                 level3_btn = rect
 
-    # ===================== PRE GAME =====================
+    # Scene 4 (Start Level)
     elif scene == 4:
         draw_text_center(f"LEVEL {selected_level}", font_big, 350)
         draw_text_center("Get Ready!", font_medium, 500)
 
-        play_btn = pygame.Rect(WIDTH//2 - 150, 700, 300, 80)
+        play_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
         draw_box("PLAY", play_btn)
 
-    # ===================== GAME =====================
+    # Scene 5 (Game Screen)
     elif scene == 5:
-
         draw_text_center(f"LEVEL {selected_level}", font_small, 100)
         draw_text_center("ORDER", font_medium, 200)
 
@@ -196,31 +211,31 @@ while running:
 
         buttons = []
 
-        # FLAVOURS
+        base_y = 750
+
+        # Flavours
         for i, f in enumerate(flavours):
-            rect = pygame.Rect(200 + i*200, 800, 180, 60)
+            rect = pygame.Rect(200 + i*180, base_y, 160, 60)
             draw_box(f, rect)
             buttons.append(("flavour", f, rect))
 
-        # TOPPING
+        # Toppings
         if selected_level >= 2:
             for i, t in enumerate(toppings):
-                rect = pygame.Rect(200 + i*200, 900, 180, 60)
+                rect = pygame.Rect(200 + i*180, base_y+100, 160, 60)
                 draw_box(t, rect, (200,200,255))
                 buttons.append(("topping", t, rect))
 
-        # CONTAINER
+        # Containers
         if selected_level >= 3:
             for i, c in enumerate(containers):
-                rect = pygame.Rect(200 + i*200, 1000, 180, 60)
+                rect = pygame.Rect(200 + i*180, base_y+200, 160, 60)
                 draw_box(c, rect, (200,255,200))
                 buttons.append(("container", c, rect))
 
-        # TIMER
         timer -= dt
         draw_text_center(f"Time: {int(timer)}", font_medium, 650)
 
-        # CHECK
         if player_choice == current_order and len(player_choice) == len(current_order):
             order_count += 1
             current_order = generate_order(selected_level)
@@ -235,26 +250,23 @@ while running:
         if timer <= 0:
             scene = 6
 
-    # ===================== RESULT =====================
+    # Scene 6 (Result Screen)
     elif scene == 6:
         draw_text_center("RESULT", font_big, 180)
         draw_text_center(f"Score: {order_count}/{max_orders}", font_medium, 280)
 
-        box_w, box_h = 350, 80
-        gap = 25
-        x = WIDTH//2 - box_w//2
-        y = 420
+        start_y = 420
 
-        replay_btn = pygame.Rect(x, y, box_w, box_h)
+        replay_btn = pygame.Rect(CENTER_X - BOX_W//2, start_y, BOX_W, BOX_H)
         draw_box("PLAY AGAIN", replay_btn)
 
-        home_btn = pygame.Rect(x, y + (box_h + gap), box_w, box_h)
+        home_btn = pygame.Rect(CENTER_X - BOX_W//2, start_y + 110, BOX_W, BOX_H)
         draw_box("HOME", home_btn)
 
         next_btn_result = None
 
         if order_count >= max_orders and selected_level < max_levels:
-            next_btn_result = pygame.Rect(x, y + 2*(box_h + gap), box_w, box_h)
+            next_btn_result = pygame.Rect(CENTER_X - BOX_W//2, start_y + 220, BOX_W, BOX_H)
             draw_box("NEXT LEVEL", next_btn_result, (200,255,200))
 
     pygame.display.flip()
