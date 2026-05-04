@@ -33,5 +33,3 @@ def get_score():
 
 def get_combo():
     return combo
-
-# hello
