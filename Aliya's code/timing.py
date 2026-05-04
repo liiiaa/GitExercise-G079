@@ -26,5 +26,3 @@ def get_time():
 
 def is_time_up():
     return timer <= 0
-
-#testing
