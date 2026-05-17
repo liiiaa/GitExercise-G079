@@ -214,11 +214,10 @@ while running:
 
         draw_text_center("STORY", font_big, 300)
 
-        draw_text_center(
-            "Serve the correct ice cream orders before time runs out!",
-            font_medium,
-            450
-        )
+        draw_text_center("Spring has arrived in Bloomberry Town!", font_medium, 420)
+        draw_text_center("A young girl opened her dream Ice Cream Shop", font_medium, 500)
+        draw_text_center("to spreed happiness throung sweet treats.", font_medium, 580)
+        draw_text_center("Help her serve every customer before the ice cream melts!", font_medium, 660)
 
         next_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
 
