@@ -2,7 +2,8 @@ import pygame
 import os
 
 WIDTH, HEIGHT = 1920, 1080
-ASSETS_PATH = os.path.join("GitExercise", "Assets") 
+BASE_DIR = os.path.dirname(__file__)
+ASSETS_PATH = os.path.join(BASE_DIR, '..', 'Assets')
 LEVELS_FOLDER = "Levels Assets" 
 BUTTONS_FOLDER = "Buttons Assets"
 
