@@ -3,7 +3,7 @@ import sys
 import random
 import os
 
-# LINK KAWAN PUNYA CODE
+# LINK W LIA'S CODE
 sys.path.append("Lia's codes")
 
 from ui_layout import load_assets
@@ -16,7 +16,7 @@ from ui_layout_screen2 import (
 pygame.init()
 clock = pygame.time.Clock()
 
-WIDTH, HEIGHT = 1920, 1200
+WIDTH, HEIGHT = 1280, 720
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("A Scoop of Spring")
 
@@ -28,13 +28,13 @@ current_page = 0
 
 # Fonts
 font_big = pygame.font.SysFont(None, 100)
-font_medium = pygame.font.SysFont(None, 60)
+font_medium = pygame.font.SysFont(None, 40)
 font_small = pygame.font.SysFont(None, 40)
 
 # UI Config
-BOX_W = 420
-BOX_H = 85
-BOX_GAP = 25
+BOX_W = 320
+BOX_H = 75
+BOX_GAP = 15
 CENTER_X = WIDTH // 2
 
 # Game
@@ -183,9 +183,9 @@ while running:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        logo_rect = ui_assets['logo'].get_rect(center=(WIDTH // 2, 420))
+        logo_rect = ui_assets['logo'].get_rect(center=(WIDTH // 2, 350))
 
-        start_button_rect = ui_assets['start_button'].get_rect(center=(WIDTH // 2, 900))
+        start_button_rect = ui_assets['start_button'].get_rect(center=(WIDTH // 2, 620))
 
         screen.blit(ui_assets['background'], (0,0))
 
@@ -212,14 +212,14 @@ while running:
 
         screen.blit(ui_assets['background'], (0,0))
 
-        draw_text_center("STORY", font_big, 300)
+        draw_text_center("STORY", font_big, 100)
 
-        draw_text_center("Spring has arrived in Bloomberry Town!", font_medium, 420)
-        draw_text_center("A young girl opened her dream Ice Cream Shop", font_medium, 500)
-        draw_text_center("to spreed happiness throung sweet treats.", font_medium, 580)
-        draw_text_center("Help her serve every customer before the ice cream melts!", font_medium, 660)
+        draw_text_center("Spring has arrived in Bloomberry Town!", font_medium, 220)
+        draw_text_center("A young girl opened her dream Ice Cream Shop", font_medium, 300)
+        draw_text_center("to spreed happiness throung sweet treats.", font_medium, 380)
+        draw_text_center("Help her serve every customer before the ice cream melts!", font_medium, 460)
 
-        next_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
+        next_btn = pygame.Rect(CENTER_X - BOX_W//2, 600, BOX_W, BOX_H)
 
         draw_box("NEXT", next_btn)
 
@@ -247,11 +247,11 @@ while running:
 
         screen.blit(ui_assets['background'], (0,0))
 
-        draw_text_center(f"LEVEL {selected_level}", font_big, 350)
+        draw_text_center(f"LEVEL {selected_level}", font_big, 270)
 
-        draw_text_center("Get Ready!", font_medium, 500)
+        draw_text_center("Get Ready!", font_medium, 330)
 
-        play_btn = pygame.Rect(CENTER_X - BOX_W//2, 700, BOX_W, BOX_H)
+        play_btn = pygame.Rect(CENTER_X - BOX_W//2, 400, BOX_W, BOX_H)
 
         draw_box("PLAY", play_btn)
 
@@ -259,39 +259,32 @@ while running:
     # SCENE 5 GAME
     # =========================
     elif scene == 5:
-
         screen.blit(ui_assets['background'], (0,0))
 
-        draw_text_center(f"LEVEL {selected_level}", font_small, 100)
+        draw_text_center(f"LEVEL {selected_level}", font_big, 100)
 
+        #Order
         draw_text_center("ORDER", font_medium, 200)
-
         y = 260
-
         for k, v in current_order.items():
-
             draw_text_center(f"{k}: {v}", font_small, y)
-
             y += 40
 
-        draw_text_center("YOUR CHOICE", font_medium, 400)
-
-        y = 460
-
+        #Your Choice
+        draw_text_center("YOUR CHOICE", font_medium, y + 40)
+        y_choice = y + 80
         for k, v in player_choice.items():
+            draw_text_center(f"{k}: {v}", font_small, y_choice)
+            y_choice += 40
 
-            draw_text_center(f"{k}: {v}", font_small, y)
-
-            y += 40
-
+        #Button
         buttons = []
-
-        base_y = 750
+        base_y = 500
 
         # FLAVOURS
         for i, f in enumerate(flavours):
 
-            rect = pygame.Rect(200 + i*180, base_y, 160, 60)
+            rect = pygame.Rect(150 + i*220, base_y, 160, 60)
 
             draw_box(f, rect)
 
@@ -302,7 +295,7 @@ while running:
 
             for i, t in enumerate(toppings):
 
-                rect = pygame.Rect(200 + i*180, base_y+100, 160, 60)
+                rect = pygame.Rect(150 + i*220, base_y+80, 160, 60)
 
                 draw_box(t, rect, (200,200,255))
 
@@ -313,15 +306,22 @@ while running:
 
             for i, c in enumerate(containers):
 
-                rect = pygame.Rect(200 + i*180, base_y+200, 160, 60)
+                rect = pygame.Rect(150 + i*220, base_y+160, 160, 60)
 
                 draw_box(c, rect, (200,255,200))
 
                 buttons.append(("container", c, rect))
 
-        timer -= dt
+        #Timer
+        if selected_level == 1 :
+            timer_y = base_y +90
+        elif selected_level == 2 :
+            timer_y = base_y +170
+        else:
+            timer_y = base_y +250
 
-        draw_text_center(f"Time: {int(timer)}", font_medium, 650)
+        timer -= dt
+        draw_text_center(f"Time: {int(timer)}", font_medium, HEIGHT - 50)
 
         if player_choice == current_order and len(player_choice) == len(current_order):
 
@@ -350,15 +350,15 @@ while running:
 
         screen.blit(ui_assets['background'], (0,0))
 
-        draw_text_center("RESULT", font_big, 210)
+        draw_text_center("RESULT", font_big, 110)
 
         draw_text_center(
             f"Score: {order_count}/{max_orders}",
             font_medium,
-            280
+            180
         )
 
-        start_y = 420
+        start_y = 300
 
         replay_btn = pygame.Rect(
             CENTER_X - BOX_W//2,

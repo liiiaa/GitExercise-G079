@@ -6,18 +6,19 @@ import os
 BASE_DIR = os.path.dirname(__file__)
 ASSETS_PATH = os.path.join(BASE_DIR, '..', 'Assets')
 SUB_FOLDER = "Buttons Assets"
-WIDTH, HEIGHT = 1920, 1200
+WIDTH, HEIGHT = 1280, 720
 
 def load_assets():
     assets = {}
     try:
-        assets['background'] = pygame.image.load(os.path.join(ASSETS_PATH, 'Background.png')).convert_alpha()
+        bg = pygame.image.load(os.path.join(ASSETS_PATH, 'Background.png')).convert_alpha()
+        assets['background'] = pygame.transform.smoothscale(bg, (WIDTH, HEIGHT))
         
         logo = pygame.image.load(os.path.join(ASSETS_PATH, 'Game Logo.png')).convert_alpha()
-        assets['logo'] = pygame.transform.smoothscale(logo, (900, 900))
+        assets['logo'] = pygame.transform.smoothscale(logo, (600, 600))
 
         start_img = pygame.image.load(os.path.join(ASSETS_PATH, SUB_FOLDER, 'Start button.png')).convert_alpha()
-        assets['start_button'] = pygame.transform.smoothscale(start_img, (500, 250))
+        assets['start_button'] = pygame.transform.smoothscale(start_img, (350, 150))
 
         return assets
     except Exception as e:
@@ -33,8 +34,8 @@ def test_ui():
     if not all_assets:
         return
 
-    logo_rect = all_assets['logo'].get_rect(center=(WIDTH // 2, 450))
-    start_button_rect = all_assets['start_button'].get_rect(center=(WIDTH // 2, 900))
+    logo_rect = all_assets['logo'].get_rect(center=(WIDTH // 2, 350))
+    start_button_rect = all_assets['start_button'].get_rect(center=(WIDTH // 2, 600))
 
     clock = pygame.time.Clock()
     running = True

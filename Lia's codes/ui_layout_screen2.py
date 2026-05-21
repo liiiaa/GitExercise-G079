@@ -1,7 +1,7 @@
 import pygame
 import os
 
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT = 1280, 720
 BASE_DIR = os.path.dirname(__file__)
 ASSETS_PATH = os.path.join(BASE_DIR, '..', 'Assets')
 LEVELS_FOLDER = "Levels Assets" 
