@@ -12,9 +12,7 @@ screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.DOUBLEBUF)
 pygame.display.set_caption("A Scoop of Spring")
 clock = pygame.time.Clock()
 
-# --- Smaller Cuter Font ---
 try:
-    # Font size reduced from 35 to 25
     font = pygame.font.SysFont("Comic Sans MS", 25, bold=True)
 except:
     font = pygame.font.SysFont("Arial", 25, bold=True)
@@ -100,10 +98,9 @@ class ChatBubble:
         if not self.active or not self.speaker.visible: return
         text_surf = self.font.render(self.text, True, (80, 50, 20)) 
         
-        # Calculate bubble size based on text
+        
         bubble_w = text_surf.get_width() + 40
         bubble_h = text_surf.get_height() + 20
-        # Position bubble significantly higher to avoid covering blender/prep area
         bx, by = self.speaker.x - 50, self.speaker.y - 60
         
         pygame.draw.rect(screen, (255, 255, 255), (bx, by, bubble_w, bubble_h), border_radius=15)
