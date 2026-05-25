@@ -1,3 +1,5 @@
+# ONLY FOR TESTING TO MAKE SURE THE SOUND FUNCTIONS 
+
 import pygame
 import sys
 import random
