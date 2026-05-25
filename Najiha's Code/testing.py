@@ -20,7 +20,7 @@ WIDTH, HEIGHT = 1280, 720
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("A Scoop of Spring")
 
-# LOAD UI ASSETS
+# Load UI Assets
 ui_assets = load_assets()
 level_assets = load_level_assets()
 
@@ -41,12 +41,17 @@ CENTER_X = WIDTH // 2
 scene = 1
 selected_level = 1
 
-max_levels = 3
+max_levels = 5
 unlocked_level = 1
 
+# ICE CREAM
 flavours = ["Vanilla", "Chocolate", "Strawberry", "Choco Mint"]
 toppings = ["Sprinkles", "Choco chips"]
 containers = ["Cone", "Cup"]
+
+# MILKSHAKE
+milkshake_flavours = ["Oreo", "Caramel", "Matcha"]
+creams = ["Whipped Cream", "Chocolate Cream"]
 
 current_order = {}
 player_choice = {}
@@ -69,13 +74,16 @@ def draw_text_center(text, font, y, color=(255,255,255)):
 
 
 def draw_box(text, rect, color=(255,255,255), text_color=(0,0,0), font=font_small):
+
     pygame.draw.rect(screen, color, rect, border_radius=18)
 
     img = font.render(text, True, text_color)
     text_rect = img.get_rect(center=rect.center)
 
     if text_rect.width > rect.width - 20:
+
         font2 = pygame.font.SysFont(None, 30)
+
         img = font2.render(text, True, text_color)
         text_rect = img.get_rect(center=rect.center)
 
@@ -83,7 +91,23 @@ def draw_box(text, rect, color=(255,255,255), text_color=(0,0,0), font=font_smal
 
 
 def generate_order(level):
-    order = {"flavour": random.choice(flavours)}
+
+    # LEVEL 4 & 5 (Milkshake)
+    if level >= 4:
+
+        order = {
+            "milkshake": random.choice(milkshake_flavours)
+        }
+
+        if level >= 5:
+            order["cream"] = random.choice(creams)
+
+        return order
+
+    # LEVEL 1-3 (Ice cream)
+    order = {
+        "flavour": random.choice(flavours)
+    }
 
     if level >= 2:
         order["topping"] = random.choice(toppings)
@@ -94,7 +118,7 @@ def generate_order(level):
     return order
 
 
-# MAIN LOOP
+# LOOP
 running = True
 
 while running:
@@ -120,7 +144,7 @@ while running:
             elif scene == 2 and next_btn and next_btn.collidepoint(mx, my):
                 scene = 3
 
-            # SCENE 3 LEVEL SELECT
+            # SCENE 3
             elif scene == 3:
 
                 layout = get_level_ui_layout()
@@ -129,18 +153,25 @@ while running:
 
                 for i in range(4):
 
+                    clicked_level = start_level + i
+
+                    if clicked_level > max_levels:
+                        continue
+
                     if layout[f'slot_{i}'].collidepoint(mx, my):
 
-                        clicked_level = start_level + i
+                        selected_level = clicked_level
+                        scene = 4
 
-                        if clicked_level <= max_levels:
-                            selected_level = clicked_level
-                            scene = 4
+                total_pages = (max_levels - 1) // 4
 
                 if layout['next_btn'].collidepoint(mx, my):
-                    current_page += 1
+
+                    if current_page < total_pages:
+                        current_page += 1
 
                 if layout['prev_btn'].collidepoint(mx, my):
+
                     if current_page > 0:
                         current_page -= 1
 
@@ -154,7 +185,7 @@ while running:
                 order_count = 0
                 timer = 10
 
-            # SCENE 5 GAME
+            # SCENE 5
             elif scene == 5:
 
                 for b_type, value, rect in buttons:
@@ -162,7 +193,7 @@ while running:
                     if rect.collidepoint(mx, my):
                         player_choice[b_type] = value
 
-            # SCENE 6 RESULT
+            # SCENE 6
             elif scene == 6:
 
                 if replay_btn and replay_btn.collidepoint(mx, my):
@@ -176,9 +207,8 @@ while running:
                     selected_level += 1
                     scene = 4
 
-    # =========================
+
     # SCENE 1 START SCREEN
-    # =========================
     if scene == 1:
 
         mouse_pos = pygame.mouse.get_pos()
@@ -195,8 +225,10 @@ while running:
 
             hover_surf = ui_assets['start_button'].copy()
 
-            hover_surf.fill((255,255,255,50),
-                            special_flags=pygame.BLEND_RGBA_ADD)
+            hover_surf.fill(
+                (255,255,255,50),
+                special_flags=pygame.BLEND_RGBA_ADD
+            )
 
             screen.blit(hover_surf, start_button_rect)
 
@@ -205,27 +237,49 @@ while running:
 
         start_btn = start_button_rect
 
-    # =========================
+
     # SCENE 2 STORY
-    # =========================
     elif scene == 2:
 
         screen.blit(ui_assets['background'], (0,0))
 
         draw_text_center("STORY", font_big, 100)
 
-        draw_text_center("Spring has arrived in Bloomberry Town!", font_medium, 220)
-        draw_text_center("A young girl opened her dream Ice Cream Shop", font_medium, 300)
-        draw_text_center("to spreed happiness throung sweet treats.", font_medium, 380)
-        draw_text_center("Help her serve every customer before the ice cream melts!", font_medium, 460)
+        draw_text_center(
+            "Spring has arrived in Bloomberry Town!",
+            font_medium,
+            220
+        )
 
-        next_btn = pygame.Rect(CENTER_X - BOX_W//2, 600, BOX_W, BOX_H)
+        draw_text_center(
+            "A young girl opened her dream Ice Cream Shop",
+            font_medium,
+            300
+        )
+
+        draw_text_center(
+            "to spread happiness through sweet treats.",
+            font_medium,
+            380
+        )
+
+        draw_text_center(
+            "Help her serve every customer before the ice cream melts!",
+            font_medium,
+            460
+        )
+
+        next_btn = pygame.Rect(
+            CENTER_X - BOX_W//2,
+            600,
+            BOX_W,
+            BOX_H
+        )
 
         draw_box("NEXT", next_btn)
 
-    # =========================
+
     # SCENE 3 LEVEL SELECT
-    # =========================
     elif scene == 3:
 
         mouse_pos = pygame.mouse.get_pos()
@@ -240,9 +294,8 @@ while running:
             current_page
         )
 
-    # =========================
+
     # SCENE 4 READY
-    # =========================
     elif scene == 4:
 
         screen.blit(ui_assets['background'], (0,0))
@@ -251,79 +304,164 @@ while running:
 
         draw_text_center("Get Ready!", font_medium, 330)
 
-        play_btn = pygame.Rect(CENTER_X - BOX_W//2, 400, BOX_W, BOX_H)
+        play_btn = pygame.Rect(
+            CENTER_X - BOX_W//2,
+            400,
+            BOX_W,
+            BOX_H
+        )
 
         draw_box("PLAY", play_btn)
 
-    # =========================
+
     # SCENE 5 GAME
-    # =========================
     elif scene == 5:
+
         screen.blit(ui_assets['background'], (0,0))
 
         draw_text_center(f"LEVEL {selected_level}", font_big, 100)
 
-        #Order
-        draw_text_center("ORDER", font_medium, 200)
+        # ORDER TITLE
+        if selected_level >= 4:
+            draw_text_center("MILKSHAKE ORDER", font_medium, 200)
+        else:
+            draw_text_center("ORDER", font_medium, 200)
+
+        # ORDER
         y = 260
+
         for k, v in current_order.items():
+
             draw_text_center(f"{k}: {v}", font_small, y)
+
             y += 40
 
-        #Your Choice
+        # YOUR CHOICE
         draw_text_center("YOUR CHOICE", font_medium, y + 40)
+
         y_choice = y + 80
+
         for k, v in player_choice.items():
+
             draw_text_center(f"{k}: {v}", font_small, y_choice)
+
             y_choice += 40
 
-        #Button
+        # BUTTONS
         buttons = []
+
         base_y = 500
 
         # FLAVOURS
-        for i, f in enumerate(flavours):
+        if selected_level <= 3:
 
-            rect = pygame.Rect(150 + i*220, base_y, 160, 60)
+            for i, f in enumerate(flavours):
 
-            draw_box(f, rect)
+                rect = pygame.Rect(
+                    150 + i*220,
+                    base_y,
+                    160,
+                    60
+                )
 
-            buttons.append(("flavour", f, rect))
+                draw_box(f, rect)
+
+                buttons.append(("flavour", f, rect))
 
         # TOPPINGS
-        if selected_level >= 2:
+        if selected_level >= 2 and selected_level <= 3:
 
             for i, t in enumerate(toppings):
 
-                rect = pygame.Rect(150 + i*220, base_y+80, 160, 60)
+                rect = pygame.Rect(
+                    150 + i*220,
+                    base_y + 80,
+                    160,
+                    60
+                )
 
                 draw_box(t, rect, (200,200,255))
 
                 buttons.append(("topping", t, rect))
 
         # CONTAINERS
-        if selected_level >= 3:
+        if selected_level >= 3 and selected_level <= 3:
 
             for i, c in enumerate(containers):
 
-                rect = pygame.Rect(150 + i*220, base_y+160, 160, 60)
+                rect = pygame.Rect(
+                    150 + i*220,
+                    base_y + 160,
+                    160,
+                    60
+                )
 
                 draw_box(c, rect, (200,255,200))
 
                 buttons.append(("container", c, rect))
 
-        #Timer
-        if selected_level == 1 :
-            timer_y = base_y +90
-        elif selected_level == 2 :
-            timer_y = base_y +170
+        # MILKSHAKE FLAVOURS
+        if selected_level >= 4:
+
+            for i, m in enumerate(milkshake_flavours):
+
+                rect = pygame.Rect(
+                    180 + i*250,
+                    base_y,
+                    180,
+                    60
+                )
+
+                draw_box(m, rect, (255,220,200))
+
+                buttons.append(("milkshake", m, rect))
+
+        # CREAMS
+        if selected_level >= 5:
+
+            for i, c in enumerate(creams):
+
+                rect = pygame.Rect(
+                    250 + i*300,
+                    base_y + 90,
+                    220,
+                    60
+                )
+
+                draw_box(c, rect, (255,240,200))
+
+                buttons.append(("cream", c, rect))
+
+        # TIMER POSITION
+        if selected_level == 1:
+            timer_y = base_y + 90
+
+        elif selected_level == 2:
+            timer_y = base_y + 170
+
+        elif selected_level == 3:
+            timer_y = base_y + 250
+
+        elif selected_level == 4:
+            timer_y = base_y + 170
+
         else:
-            timer_y = base_y +250
+            timer_y = base_y + 260
 
+        # TIMER
         timer -= dt
-        draw_text_center(f"Time: {int(timer)}", font_medium, HEIGHT - 50)
 
-        if player_choice == current_order and len(player_choice) == len(current_order):
+        draw_text_center(
+            f"Time: {int(timer)}",
+            font_medium,
+            timer_y
+        )
+
+        # CHECK ANSWER
+        if (
+            player_choice == current_order and
+            len(player_choice) == len(current_order)
+        ):
 
             order_count += 1
 
@@ -335,17 +473,20 @@ while running:
 
             if order_count >= max_orders:
 
-                if selected_level == unlocked_level and unlocked_level < max_levels:
+                if (
+                    selected_level == unlocked_level and
+                    unlocked_level < max_levels
+                ):
                     unlocked_level += 1
 
                 scene = 6
 
+        # TIME OUT
         if timer <= 0:
             scene = 6
 
-    # =========================
+
     # SCENE 6 RESULT
-    # =========================
     elif scene == 6:
 
         screen.blit(ui_assets['background'], (0,0))
