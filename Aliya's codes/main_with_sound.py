@@ -4,7 +4,7 @@ import pygame
 import sys
 import random
 from score import calculate_score, get_score, reset_score
-from music import play_music
+from sound import play_music
 
 pygame.init()
 clock = pygame.time.Clock()
