@@ -41,12 +41,17 @@ CENTER_X = WIDTH // 2
 scene = 1
 selected_level = 1
 
-max_levels = 3
+max_levels = 5
 unlocked_level = 1
 
+# Ice  cream
 flavours = ["Vanilla", "Chocolate", "Strawberry", "Choco Mint"]
 toppings = ["Sprinkles", "Choco chips"]
 containers = ["Cone", "Cup"]
+
+# Milkshake
+milkshake_flavours = ["Oreo", "Caramel", "Matcha"]
+creams = ["Whipped Cream", "Chocolate Cream"]
 
 current_order = {}
 player_choice = {}
@@ -81,8 +86,20 @@ def draw_box(text, rect, color=(255,255,255), text_color=(0,0,0), font=font_smal
 
     screen.blit(img, text_rect)
 
-
+#generate order
 def generate_order(level):
+
+    # LEVEL 4 & 5 = MILKSHAKE
+    if level >= 4:
+
+        order = {"milkshake": random.choice(milkshake_flavours)}
+
+        if level >= 5:
+            order["cream"] = random.choice(creams)
+
+        return order
+
+    # LEVEL 1-3 = ICE CREAM
     order = {"flavour": random.choice(flavours)}
 
     if level >= 2:
@@ -129,16 +146,21 @@ while running:
 
                 for i in range(4):
 
+                    clicked_level = start_level + i
+
+                    if clicked_level > max_levels:
+                        continue
+
                     if layout[f'slot_{i}'].collidepoint(mx, my):
 
-                        clicked_level = start_level + i
-
-                        if clicked_level <= max_levels:
                             selected_level = clicked_level
                             scene = 4
 
+                total_pages = (max_levels - 1) // 4
+
                 if layout['next_btn'].collidepoint(mx, my):
-                    current_page += 1
+                    if current_page < total_pages:
+                        current_page += 1
 
                 if layout['prev_btn'].collidepoint(mx, my):
                     if current_page > 0:
@@ -263,8 +285,13 @@ while running:
 
         draw_text_center(f"LEVEL {selected_level}", font_big, 100)
 
+        #Order Display
+        if selected_level >= 4:
+            draw_text_center("MILKSHAKE ORDER", font_medium, 200)
+        else:
+            draw_text_center("ORDER", font_medium, 200)
+
         #Order
-        draw_text_center("ORDER", font_medium, 200)
         y = 260
         for k, v in current_order.items():
             draw_text_center(f"{k}: {v}", font_small, y)
@@ -282,16 +309,16 @@ while running:
         base_y = 500
 
         # Flavours
-        for i, f in enumerate(flavours):
+        if selected_level <= 3:
 
-            rect = pygame.Rect(150 + i*220, base_y, 160, 60)
+            for i, f in enumerate(flavours):
+                rect = pygame.Rect(150 + i*220, base_y, 160, 60)
 
-            draw_box(f, rect)
-
-            buttons.append(("flavour", f, rect))
+                draw_box(f, rect)
+                buttons.append(("flavour", f, rect))
 
         # Toppings
-        if selected_level >= 2:
+        if selected_level >= 2 and selected_level <= 3:
 
             for i, t in enumerate(toppings):
 
@@ -302,7 +329,7 @@ while running:
                 buttons.append(("topping", t, rect))
 
         # Containers
-        if selected_level >= 3:
+        if selected_level >= 3 and selected_level <= 3:
 
             for i, c in enumerate(containers):
 
@@ -312,16 +339,35 @@ while running:
 
                 buttons.append(("container", c, rect))
 
-        #Timer
+        #Milkshake Flavours
+        if selected_level >= 4:
+            for i, m in enumerate(milkshake_flavours):
+                rect = pygame.Rect(180 + i*250, base_y, 180, 60)
+                draw_box(m, rect, (255,220,200))
+                buttons.append(("milkshake", m, rect))
+
+        #Creams
+        if selected_level >= 5:
+            for i, c in enumerate(creams):
+                rect = pygame.Rect(250 + i*300, base_y + 90, 220, 60)
+                draw_box(c, rect, (255,240,200))
+                buttons.append(("cream", c, rect))
+
+        #Timer display
         if selected_level == 1 :
             timer_y = base_y +90
         elif selected_level == 2 :
             timer_y = base_y +170
+        elif selected_level == 3:
+            timer_y = base_y + 250
+        elif selected_level == 4:
+            timer_y = base_y + 170
         else:
-            timer_y = base_y +250
+            timer_y = base_y + 260
 
+        #Timer
         timer -= dt
-        draw_text_center(f"Time: {int(timer)}", font_medium, HEIGHT - 50)
+        draw_text_center(f"Time: {int(timer)}", font_medium, timer_y)
 
         if player_choice == current_order and len(player_choice) == len(current_order):
 
@@ -339,7 +385,7 @@ while running:
                     unlocked_level += 1
 
                 scene = 6
-
+        #Time out
         if timer <= 0:
             scene = 6
 
