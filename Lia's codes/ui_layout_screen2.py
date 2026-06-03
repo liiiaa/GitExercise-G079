@@ -1,7 +1,11 @@
 import pygame
 import os
+import game_data
+import subprocess
+import sys
 
 WIDTH, HEIGHT = 1920, 1080
+SELECTED_LEVEL = 1
 ASSETS_PATH = os.path.join("GitExercise", "Assets") 
 LEVELS_FOLDER = "Levels Assets" 
 BUTTONS_FOLDER = "Buttons Assets"
@@ -57,7 +61,9 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
     
     for i in range(4):
         level_num = start_level + i
-        if level_num > 25: break
+        if level_num > 5: break
+
+        locked = level_num > game_data.UNLOCKED_LEVEL
 
         rect = layout[f'slot_{i}']
         scoop_center = (rect.centerx, rect.centery + 10) 
@@ -78,6 +84,11 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
         text_surf = assets['font'].render(level_text, True, (255, 255, 255))
         outline_surf = assets['font'].render(level_text, True, (30, 30, 30))
         text_rect = text_surf.get_rect(center=number_center)
+
+        if locked:
+            locked_img = scoop_img.copy()
+            locked_img.fill((80, 80, 80, 180), special_flags=pygame.BLEND_RGBA_MULT)
+            screen.blit(locked_img, scoop_img.get_rect(center=scoop_center))
 
         off = 4
         screen.blit(outline_surf, (text_rect.x - off, text_rect.y - off))
@@ -108,14 +119,14 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
 def test_selection_ui():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Level Select: 4 per page")
+    pygame.display.set_caption("Level Select")
     clock = pygame.time.Clock()
     
     all_assets = load_assets()
     if not all_assets: return
 
     current_page = 0
-    total_pages = 7
+    total_pages = 2
 
     running = True
     while running:
@@ -143,8 +154,27 @@ def test_selection_ui():
                 for i in range(4):
                     if layout[f'slot_{i}'].collidepoint(mouse_pos):
                         clicked_level = start_level + i
-                        if clicked_level <= 25:
-                            print(f"Starting Level {clicked_level}!")
+                        if clicked_level <= game_data.UNLOCKED_LEVEL:
+                            game_data.CURRENT_LEVEL = clicked_level
+
+                            test_path = os.path.join(
+                                os.path.dirname(__file__),
+                                "TEST.py"
+                            )
+
+                            print("Trying to open:", test_path)
+                            
+                            result = subprocess.run(
+                                [sys.executable, test_path],
+                                capture_output=True,
+                                text=True
+                            )
+
+                            print("STDOUT:")
+                            print(result.stdout)
+
+                            print("STDERR:")
+                            print(result.stderr)
 
         draw_level_selection_ui(screen, all_assets, mouse_pos, current_page)
         
