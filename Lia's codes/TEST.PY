@@ -218,8 +218,8 @@ def generate_order():
         
 
         order_string = (
-            f"{flavor1} {base1} and "
-            f"{flavor2} {base2}!"
+            f"One {flavor1} {base1} and "
+            f"{flavor2} {base2} please!"
         )
 
         chat_bubble.show(order_string)
@@ -251,7 +251,7 @@ def generate_order():
              if random.random() > 0.4:
                  toppings.append("cherry")
         top_str = " and ".join(toppings) if toppings else "no toppings"
-        order_string = f"One {flavor} cone with {top_str}!"
+        order_string = f"One {flavor} cone with {top_str} please!"
     current_order = {"base": base, "flavor": flavor, "toppings": sorted(toppings)}
     chat_bubble.show(order_string)
 
@@ -274,7 +274,7 @@ def check_service():
                 served_items.append(item)
 
         if len(served_items) != 2:
-            chat_bubble.show("Serve BOTH items together!")
+            chat_bubble.show("Serve BOTH items together please!")
             return
 
         item_data = []
@@ -303,7 +303,7 @@ def check_service():
 
         if sorted(item_data, key=str) == sorted(expected, key=str):
 
-            chat_bubble.show("Amazing! Combo order complete!")
+            chat_bubble.show("Amazing! Thank you!")
 
             for item in served_items:
                 if item in placed_items:
