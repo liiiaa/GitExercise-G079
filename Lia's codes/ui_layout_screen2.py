@@ -10,7 +10,7 @@ import sys
 
 WIDTH, HEIGHT = 1920, 1080
 SELECTED_LEVEL = 1
-ASSETS_PATH = os.path.join("GitExercise", "Assets") 
+ASSETS_PATH = "Assets"
 LEVELS_FOLDER = "Levels Assets" 
 BUTTONS_FOLDER = "Buttons Assets"
 
