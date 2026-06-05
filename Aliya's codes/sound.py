@@ -22,3 +22,8 @@ def play_music(file, volume=0.4, loop=True):
 
 def stop_music():
     pygame.mixer.music.stop()
+
+def play_sound_effect(file, volume=0.6):
+    sound = pygame.mixer.Sound(file)
+    sound.set_volume(volume)
+    sound.play()
