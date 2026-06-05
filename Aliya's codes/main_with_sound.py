@@ -20,8 +20,7 @@ MUSIC_FOLDER = os.path.join("Sound Tracks")
 MENU_MUSIC = os.path.join(MUSIC_FOLDER, "mainmenu.mp3")
 GAMEPLAY_MUSIC = os.path.join(MUSIC_FOLDER, "gameplay.mp3")
 CORRECT_SOUND = os.path.join(MUSIC_FOLDER, "correct.mp3")
-print("Menu path:", MENU_MUSIC)
-print("Exists?", os.path.exists(MENU_MUSIC))
+WRONG_SOUND = os.path.join(MUSIC_FOLDER, "wrong.mp3")
 
 # Fonts
 font_big = pygame.font.SysFont(None, 100)
@@ -358,8 +357,10 @@ while running:
         # Wrong Order
         elif len(player_choice) == len(current_order):
 
-            result_text = calculate_score(False, timer)
-            player_choice = {}
+             play_sound_effect(WRONG_SOUND)
+
+        result_text = calculate_score(False, timer)
+        player_choice = {}
 
         # Time Up
         if timer <= 0:
