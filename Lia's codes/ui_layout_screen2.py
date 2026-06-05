@@ -1,5 +1,9 @@
 import pygame
 import os
+print(
+    "READING LEVEL FROM:",
+    os.path.abspath("current_level.txt")
+)
 import game_data
 import subprocess
 import sys
@@ -130,6 +134,13 @@ def test_selection_ui():
 
     running = True
     while running:
+
+        try: 
+            with open("save.txt", "r") as f:
+                game_data.UNLOCKED_LEVEL = int((f.read().strip()))
+        except:
+            pass
+
         if all_assets and 'background' in all_assets:
             screen.blit(all_assets['background'], (0, 0))
         else:
@@ -155,6 +166,15 @@ def test_selection_ui():
                     if layout[f'slot_{i}'].collidepoint(mouse_pos):
                         clicked_level = start_level + i
                         if clicked_level <= game_data.UNLOCKED_LEVEL:
+                        
+
+                            print("SELECTED LEVEL =", clicked_level)
+
+                            with open("current_level.txt", "w") as f:
+                                f.write(str(clicked_level))
+
+                            print("WROTE LEVEL =", clicked_level)
+
                             game_data.CURRENT_LEVEL = clicked_level
 
                             test_path = os.path.join(
@@ -164,17 +184,11 @@ def test_selection_ui():
 
                             print("Trying to open:", test_path)
                             
-                            result = subprocess.run(
-                                [sys.executable, test_path],
-                                capture_output=True,
-                                text=True
+                            subprocess.Popen(
+                                [sys.executable, test_path]
                             )
 
-                            print("STDOUT:")
-                            print(result.stdout)
-
-                            print("STDERR:")
-                            print(result.stderr)
+                            running = False
 
         draw_level_selection_ui(screen, all_assets, mouse_pos, current_page)
         

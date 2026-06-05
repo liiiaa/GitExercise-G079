@@ -1,6 +1,11 @@
 import pygame
+import subprocess
 import sys
 import os
+print(
+    "READING LEVEL FROM:",
+    os.path.abspath("current_level.txt")
+)
 import random
 import game_data
 
@@ -68,7 +73,12 @@ ALL_FLAVOR_POS = {
     "coffee": (750, 820)
 }
 
-CURRENT_LEVEL = game_data.CURRENT_LEVEL
+try:
+    with open("current_level.txt", "r") as f:
+        CURRENT_LEVEL = int(f.read().strip())
+except:
+    CURRENT_LEVEL = 1
+    print("CURRENT LEVEL FILE READ =", CURRENT_LEVEL)
 
 LEVEL_UNLOCKS = {
     1: {
@@ -312,8 +322,16 @@ def check_service():
             orders_completed += 1
 
             if orders_completed >= 3:
-                show_completion_screen()
+                pygame.time.set_timer(
+                    pygame.USEREVENT + 3,
+                    2500
+                )
 
+                print("RESULT =", result)
+
+                if result == "LEVEL_SELECT":
+                    return "LEVEL_SELECT"
+                
             pygame.time.set_timer(pygame.USEREVENT + 1, 2500)
 
         else:
@@ -366,7 +384,16 @@ def check_service():
         orders_completed += 1
 
         if orders_completed >= 3:
-            show_completion_screen()
+            pygame.time.set_timer(
+                    pygame.USEREVENT + 3,
+                    2500
+                )
+
+
+            print("RESULT =", result)
+
+            if result == "LEVEL_SELECT":
+                 return "LEVEL_SELECT"
 
         pygame.time.set_timer(
             pygame.USEREVENT + 1,
@@ -389,6 +416,13 @@ def show_completion_screen():
         80
     )
 
+    level_select_rect = pygame.Rect(
+        SCREEN_W // 2 - 150,
+        SCREEN_H // 2 + 180,
+        300,
+        80
+    )
+
     running = True
 
     while running:
@@ -400,17 +434,53 @@ def show_completion_screen():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
 
-                if button_rect.collidepoint(event.pos):
+                if level_select_rect.collidepoint(event.pos):
+
+                    SAVE_PATH = os.path.join(
+                        os.path.dirname(__file__),
+                        "save.txt"
+                    )
 
                     if CURRENT_LEVEL < 5:
-                        CURRENT_LEVEL += 1
+                        unlocked = CURRENT_LEVEL + 1
 
-                        game_data.CURRENT_LEVEL = CURRENT_LEVEL
+                        if unlocked > game_data.UNLOCKED_LEVEL:
+                            game_data.UNLOCKED_LEVEL = unlocked
 
-                        if CURRENT_LEVEL > game_data.UNLOCKED_LEVEL:
-                            game_data.UNLOCKED_LEVEL = CURRENT_LEVEL
+                        with open(SAVE_PATH, "w") as f:
+                            f.write(str(game_data.UNLOCKED_LEVEL))
 
-                    refresh_level()
+                        print("SAVED UNLOCKED LEVEL =", game_data.UNLOCKED_LEVEL)
+
+                    print("LEVEL SELECT CLICKED")
+                    return "LEVEL_SELECT"
+                
+                if button_rect.collidepoint(event.pos):
+
+                    if CURRENT_LEVEL == 5:
+                        pygame.quit()
+                        sys.exit()
+
+                    CURRENT_LEVEL += 1
+
+                    with open("current_level.txt", "w") as f:
+                        f.write(str(CURRENT_LEVEL))
+
+                    game_data.CURRENT_LEVEL = CURRENT_LEVEL
+
+                    if CURRENT_LEVEL > game_data.UNLOCKED_LEVEL:
+                        game_data.UNLOCKED_LEVEL = CURRENT_LEVEL
+
+                    SAVE_PATH = os.path.join(
+                        os.path.dirname(__file__),
+                        "save.txt"
+                    )
+
+                    with open(SAVE_PATH, "w") as f:
+                        f.write(str(game_data.UNLOCKED_LEVEL))
+
+
+                    refresh_level() 
 
                     orders_completed = 0
 
@@ -422,7 +492,7 @@ def show_completion_screen():
                     pygame.event.clear(pygame.USEREVENT + 1)
                     pygame.event.clear(pygame.USEREVENT + 2)
 
-                    generate_order()
+                    pygame.time.set_timer(pygame.USEREVENT + 2, 2000)
 
                     running = False
 
@@ -481,17 +551,45 @@ def show_completion_screen():
             border_radius=20
         )
 
-        button_text = font.render(
-            "NEXT LEVEL",
-            True,
-            (255, 255, 255)
-        )
+        if CURRENT_LEVEL == 5:
+            button_text = font.render(
+                "FINISH GAME",
+                True,
+                (255,255,255)
+            )
+        else:
+            button_text = font.render(
+                "NEXT LEVEL",
+                True,
+                (255,255,255)
+            )
 
         screen.blit(
             button_text,
             (
                 button_rect.centerx - button_text.get_width() // 2,
                 button_rect.centery - button_text.get_height() // 2
+            )
+        )
+
+        pygame.draw.rect(
+            screen,
+            (120, 120, 220),
+            level_select_rect,
+            border_radius=20
+        )
+
+        level_select_text = font.render(
+            "LEVEL SELECT",
+            True,
+            (255, 255, 255)
+        )
+
+        screen.blit(
+            level_select_text,
+            (
+                level_select_rect.centerx - level_select_text.get_width() // 2,
+                level_select_rect.centery - level_select_text.get_height() // 2
             )
         )
 
@@ -515,17 +613,24 @@ def reset_items_only():
 
 generate_order()
 
-while True:
+running = True
+go_to_level_select = False
+
+while running:
     dt = clock.tick(60) / 1000
     mouse_pos = pygame.mouse.get_pos()
     
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: pygame.quit(); sys.exit()
+        if event.type == pygame.QUIT: 
+            running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if RESET_RECT.collidepoint(mouse_pos): reset_items_only()
             if SERVE_BUTTON_RECT.collidepoint(mouse_pos) and customer.visible:
-                print("BUTTON PRESSED")
-                check_service()
+                result = check_service()
+
+                if result == "LEVEL_SELECT":
+                    go_to_level_select = True
+                    running = False
             
             if blender.rect.collidepoint(mouse_pos):
                 if blender.has_milk and blender.has_scoop and not blender.is_blended: blender.is_blended = True
@@ -598,9 +703,24 @@ while True:
 
         if event.type == pygame.USEREVENT + 1:
             print("USEREvENT 1 FIRED")
-            customer.visible = False; pygame.time.set_timer(pygame.USEREVENT + 1, 0); pygame.time.set_timer(pygame.USEREVENT + 2, 2000)
+            customer.visible = False
+            pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+            pygame.time.set_timer(pygame.USEREVENT + 2, 2000)
+
         if event.type == pygame.USEREVENT + 2:
-            pygame.time.set_timer(pygame.USEREVENT + 2, 0); generate_order()
+            pygame.time.set_timer(pygame.USEREVENT + 2, 0)
+            generate_order()
+
+        if event.type == pygame.USEREVENT + 3:
+            pygame.time.set_timer(pygame.USEREVENT + 3, 0)
+
+            pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+            pygame.time.set_timer(pygame.USEREVENT + 2, 0)
+
+            pygame.event.clear(pygame.USEREVENT + 1)
+            pygame.event.clear(pygame.USEREVENT + 2)
+
+            show_completion_screen()
 
     # --- POSITION UPDATES ---
     if held_item: held_item.rect.center = mouse_pos
@@ -678,3 +798,15 @@ while True:
         else: screen.blit(held_item.image, held_item.rect)
 
     pygame.display.flip()
+    
+pygame.quit()
+
+if go_to_level_select:
+    ui_path = os.path.join(
+        os.path.dirname(__file__),
+        "ui_layout_screen2.py"
+    )
+
+    subprocess.run([sys.executable, ui_path])
+
+sys.exit()
