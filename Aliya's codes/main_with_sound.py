@@ -7,7 +7,7 @@ import os
 import os
 print("Current folder:", os.getcwd())
 from score import calculate_score, get_score, reset_score
-from sound import play_music
+from sound import play_music, play_sound_effect
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -19,6 +19,7 @@ MUSIC_FOLDER = os.path.join("Sound Tracks")
 
 MENU_MUSIC = os.path.join(MUSIC_FOLDER, "mainmenu.mp3")
 GAMEPLAY_MUSIC = os.path.join(MUSIC_FOLDER, "gameplay.mp3")
+CORRECT_SOUND = os.path.join(MUSIC_FOLDER, "correct.mp3")
 print("Menu path:", MENU_MUSIC)
 print("Exists?", os.path.exists(MENU_MUSIC))
 
@@ -337,6 +338,8 @@ while running:
 
         # Correct Order
         if player_choice == current_order and len(player_choice) == len(current_order):
+
+            play_sound_effect(CORRECT_SOUND)
 
             order_count += 1
 
