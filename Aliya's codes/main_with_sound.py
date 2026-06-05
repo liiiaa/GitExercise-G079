@@ -3,6 +3,9 @@
 import pygame
 import sys
 import random
+import os
+import os
+print("Current folder:", os.getcwd())
 from score import calculate_score, get_score, reset_score
 from sound import play_music
 
@@ -12,6 +15,12 @@ clock = pygame.time.Clock()
 WIDTH, HEIGHT = 1920, 1200
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("A Scoop of Spring")
+MUSIC_FOLDER = os.path.join("Sound Tracks")
+
+MENU_MUSIC = os.path.join(MUSIC_FOLDER, "mainmenu.mp3")
+GAMEPLAY_MUSIC = os.path.join(MUSIC_FOLDER, "gameplay.mp3")
+print("Menu path:", MENU_MUSIC)
+print("Exists?", os.path.exists(MENU_MUSIC))
 
 # Fonts
 font_big = pygame.font.SysFont(None, 100)
@@ -58,7 +67,7 @@ level1_btn = level2_btn = level3_btn = None
 play_btn = replay_btn = home_btn = next_btn_result = None
 
 # Start menu music
-play_music("mainmenu.mp3")
+play_music(MENU_MUSIC)
 
 
 def draw_text_center(text, font, y, color=(255,255,255)):
@@ -132,7 +141,7 @@ while running:
             # Scene 4
             elif scene == 4 and play_btn and play_btn.collidepoint(mx, my):
 
-                play_music("gameplay.mp3")
+                play_music(GAMEPLAY_MUSIC)
 
                 scene = 5
                 current_order = generate_order(selected_level)
@@ -158,12 +167,12 @@ while running:
 
                 if replay_btn and replay_btn.collidepoint(mx, my):
 
-                    play_music("mainmenu.mp3")
+                    play_music(MENU_MUSIC)
                     scene = 3
 
                 elif home_btn and home_btn.collidepoint(mx, my):
 
-                    play_music("mainmenu.mp3")
+                    play_music(MENU_MUSIC)
                     scene = 1
 
                 elif next_btn_result and next_btn_result.collidepoint(mx, my):

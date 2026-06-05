@@ -10,6 +10,7 @@ def play_music(file, volume=0.4, loop=True):
 
     if current_music != file:
         pygame.mixer.music.stop()
+        print("Loading:", file)
         pygame.mixer.music.load(file)
         pygame.mixer.music.set_volume(volume)
 
