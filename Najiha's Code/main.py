@@ -3,9 +3,19 @@ import sys
 import random
 import os
 
-# LINK W LIA'S CODE
+pygame.init()
+
+clock = pygame.time.Clock()
+
+WIDTH, HEIGHT = 1280, 720
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("A Scoop of Spring")
+
+# PATH
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(CURRENT_DIR)
+
+# LINK W LIA'S CODE
 sys.path.append(os.path.join(PROJECT_DIR, "Lia's codes"))
 
 from ui_layout import load_assets
@@ -15,16 +25,28 @@ from ui_layout_screen2 import (
     get_level_ui_layout
 )
 
-pygame.init()
-clock = pygame.time.Clock()
+# Load Game Background
+game_bg = pygame.image.load(
+    os.path.join(PROJECT_DIR, "Assets", "Main Game Assets", "Game Background.png")
+).convert()
 
-WIDTH, HEIGHT = 1280, 720
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("A Scoop of Spring")
+game_bg = pygame.transform.scale(game_bg, (WIDTH, HEIGHT))
 
 # Load UI Assets
 ui_assets = load_assets()
 level_assets = load_level_assets()
+
+# Load Next Button
+next_btn_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Next button.png")).convert_alpha()
+next_btn_img = pygame.transform.scale(next_btn_img, (320, 160))
+
+# Load Start Button
+start_button_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Start button.png")).convert_alpha()
+start_button_img = pygame.transform.scale(start_button_img, (320, 160))
+
+# Load Character 
+char_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Main Game Assets", "char_smile.png")).convert_alpha()
+char_img = pygame.transform.scale(char_img, (330, 300))
 
 current_page = 0
 
@@ -119,8 +141,9 @@ running = True
 while running:
 
     dt = clock.tick(60) / 1000
+    screen.fill((30, 30, 40))
 
-    screen.fill((30,30,40))
+    mouse_pos = pygame.mouse.get_pos()
 
     for event in pygame.event.get():
 
@@ -128,35 +151,36 @@ while running:
             running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+            mx, my = event.pos
 
-            mx, my = pygame.mouse.get_pos()
+            # SCENE 1 → START
 
-            # Scene 1
             if scene == 1 and start_btn and start_btn.collidepoint(mx, my):
                 scene = 2
 
-            # Scene 2
-            elif scene == 2 and next_btn and next_btn.collidepoint(mx, my):
+
+            # SCENE 2 → STORY NEXT
+
+            elif scene == 2 and next_btn_rect and next_btn_rect.collidepoint(mx, my):
                 scene = 3
 
-            # Scene 3
+
+            # SCENE 3 → LEVEL SELECT
+
             elif scene == 3:
 
                 layout = get_level_ui_layout()
-
                 start_level = (current_page * 4) + 1
 
                 for i in range(4):
-
                     clicked_level = start_level + i
 
                     if clicked_level > max_levels:
                         continue
 
                     if layout[f'slot_{i}'].collidepoint(mx, my):
-
-                            selected_level = clicked_level
-                            scene = 4
+                        selected_level = clicked_level
+                        scene = 4
 
                 total_pages = (max_levels - 1) // 4
 
@@ -168,25 +192,27 @@ while running:
                     if current_page > 0:
                         current_page -= 1
 
-            # Scene 4
-            elif scene == 4 and play_btn and play_btn.collidepoint(mx, my):
+            # SCENE 4 → PLAY
+
+            elif scene == 4 and start_btn_rect and start_btn_rect.collidepoint(mx, my):
 
                 scene = 5
-
                 current_order = generate_order(selected_level)
                 player_choice = {}
                 order_count = 0
                 timer = 10
 
-            # Scene 5
+        
+            # SCENE 5 → GAME INPUT
+          
             elif scene == 5:
 
                 for b_type, value, rect in buttons:
-
                     if rect.collidepoint(mx, my):
                         player_choice[b_type] = value
 
-            # Scene 6
+            # SCENE 6 → RESULT
+    
             elif scene == 6:
 
                 if replay_btn and replay_btn.collidepoint(mx, my):
@@ -196,7 +222,6 @@ while running:
                     scene = 1
 
                 elif next_btn_result and next_btn_result.collidepoint(mx, my):
-
                     selected_level += 1
                     scene = 4
 
@@ -245,7 +270,12 @@ while running:
 
         next_btn = pygame.Rect(CENTER_X - BOX_W//2, 600, BOX_W, BOX_H)
 
-        draw_box("NEXT", next_btn)
+        # Button position
+        next_btn_rect = next_btn_img.get_rect(center=(WIDTH//2, 620))
+        mouse_pos = pygame.mouse.get_pos()
+
+        # Draw button
+        screen.blit(next_btn_img, next_btn_rect)
 
   
     # SCENE 3 LEVEL SELECT
@@ -269,32 +299,34 @@ while running:
  
     elif scene == 4:
 
-        screen.blit(ui_assets['background'], (0,0))
+        screen.blit(game_bg, (0,0))
 
-        draw_text_center(f"LEVEL {selected_level}", font_big, 270)
+        draw_text_center(f"LEVEL {selected_level}", font_big, 200)
 
-        draw_text_center("Get Ready!", font_medium, 330)
+        draw_text_center("Get Ready!", font_medium, 270)
 
-        play_btn = pygame.Rect(CENTER_X - BOX_W//2, 400, BOX_W, BOX_H)
+        start_btn_rect = start_button_img.get_rect(center=(WIDTH//2, 500))
 
-        draw_box("PLAY", play_btn)
+        screen.blit(start_button_img, start_btn_rect)
 
    
     # SCENE 5 GAME
 
     elif scene == 5:
-        screen.blit(ui_assets['background'], (0,0))
+        screen.blit(game_bg, (0,0))
+
+        screen.blit(char_img, (WIDTH - 400, 30))
 
         draw_text_center(f"LEVEL {selected_level}", font_big, 100)
 
         #Order Display
         if selected_level >= 4:
-            draw_text_center("MILKSHAKE ORDER", font_medium, 200)
+            draw_text_center("MILKSHAKE ORDER", font_medium, 150)
         else:
-            draw_text_center("ORDER", font_medium, 200)
+            draw_text_center("ORDER", font_medium, 150)
 
         #Order
-        y = 260
+        y = 200
         for k, v in current_order.items():
             draw_text_center(f"{k}: {v}", font_small, y)
             y += 40
