@@ -6,7 +6,7 @@ import os
 # LINK W LIA'S CODE
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(CURRENT_DIR)
-sys.path.append(os.path.join(PROJECT_DIR, "Lia's codes"))
+sys.path.append(os.path.join(PROJECT_DIR, "Lia's"))
 
 from ui_layout import load_assets
 from ui_layout_screen2 import (
