@@ -30,6 +30,7 @@ MENU_MUSIC = os.path.join(MUSIC_FOLDER, "mainmenu.mp3")
 GAMEPLAY_MUSIC = os.path.join(MUSIC_FOLDER, "gameplay.mp3")
 CORRECT_SOUND = os.path.join(MUSIC_FOLDER, "correct.mp3")
 WRONG_SOUND = os.path.join(MUSIC_FOLDER, "wrong.mp3")
+LEVEL_COMPLETE_SOUND = os.path.join(MUSIC_FOLDER, "level_complete.mp3")
 
 ui_assets = load_assets()
 level_assets = load_level_assets()
@@ -310,6 +311,9 @@ while running:
             player_choice = {}
 
             if order_count >= max_orders:
+
+                play_sound_effect(LEVEL_COMPLETE_SOUND)
+                
                 if selected_level == unlocked_level and unlocked_level < max_levels:
                     unlocked_level += 1
 
