@@ -8,6 +8,7 @@ import os
 print("Current folder:", os.getcwd())
 from score import calculate_score, get_score, reset_score
 from sound import play_music, play_sound_effect
+from timing import start_level, update_timer, get_time, is_time_up
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -37,7 +38,7 @@ CENTER_X = WIDTH // 2
 scene = 1
 selected_level = 1
 
-max_levels = 3
+max_levels = 5
 unlocked_level = 1
 
 flavours = ["Vanilla", "Chocolate", "Strawberry", "Choco Mint"]
@@ -50,13 +51,7 @@ player_choice = {}
 order_count = 0
 max_orders = 3
 
-level_times = {
-    1: 60,
-    2: 45,
-    3: 30
-}
-
-timer = level_times[selected_level]
+start_level(selected_level)
 
 result_text = ""
 
@@ -150,7 +145,7 @@ while running:
 
                 reset_score()
 
-                timer = level_times[selected_level]
+                start_level(selected_level)
 
                 result_text = ""
 
@@ -264,7 +259,7 @@ while running:
     # Scene 5
     elif scene == 5:
 
-        timer -= dt
+        update_timer(dt)
 
         draw_text_center(f"LEVEL {selected_level}", font_small, 100)
         draw_text_center(f"Score: {get_score()}", font_small, 140)
@@ -332,17 +327,16 @@ while running:
                 draw_box(c, rect, (200,255,200))
                 buttons.append(("container", c, rect))
 
-        draw_text_center(f"Time: {int(timer)}", font_medium, 650)
+        draw_text_center(f"Time: {get_time()}", font_medium, 650)
         draw_text_center(result_text, font_small, 700)
 
-        # Correct Order
+                # Correct Order
         if player_choice == current_order and len(player_choice) == len(current_order):
 
             play_sound_effect(CORRECT_SOUND)
 
             order_count += 1
-
-            result_text = calculate_score(True, timer)
+            result_text = calculate_score(True, get_time())
 
             current_order = generate_order(selected_level)
             player_choice = {}
@@ -357,13 +351,14 @@ while running:
         # Wrong Order
         elif len(player_choice) == len(current_order):
 
-             play_sound_effect(WRONG_SOUND)
+            play_sound_effect(WRONG_SOUND)
 
-        result_text = calculate_score(False, timer)
-        player_choice = {}
+            result_text = calculate_score(False, get_time())
+            player_choice = {}
 
         # Time Up
-        if timer <= 0:
+        if is_time_up ():
+            timer = 0
             scene = 6
 
     # Scene 6
