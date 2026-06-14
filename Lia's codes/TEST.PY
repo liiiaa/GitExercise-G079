@@ -326,11 +326,6 @@ def check_service():
                     pygame.USEREVENT + 3,
                     2500
                 )
-
-                print("RESULT =", result)
-
-                if result == "LEVEL_SELECT":
-                    return "LEVEL_SELECT"
                 
             pygame.time.set_timer(pygame.USEREVENT + 1, 2500)
 
@@ -388,12 +383,6 @@ def check_service():
                     pygame.USEREVENT + 3,
                     2500
                 )
-
-
-            print("RESULT =", result)
-
-            if result == "LEVEL_SELECT":
-                 return "LEVEL_SELECT"
 
         pygame.time.set_timer(
             pygame.USEREVENT + 1,
@@ -720,7 +709,11 @@ while running:
             pygame.event.clear(pygame.USEREVENT + 1)
             pygame.event.clear(pygame.USEREVENT + 2)
 
-            show_completion_screen()
+            result = show_completion_screen()
+
+            if result == "LEVEL_SELECT":
+                go_to_level_select = True
+                running = False
 
     # --- POSITION UPDATES ---
     if held_item: held_item.rect.center = mouse_pos
