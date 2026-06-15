@@ -68,23 +68,6 @@ selected_level = 1
 max_levels = 5
 unlocked_level = 1
 
-# Ice  cream
-flavours = ["Vanilla", "Chocolate", "Strawberry", "Choco Mint"]
-toppings = ["Sprinkles", "Choco chips"]
-containers = ["Cone", "Cup"]
-
-# Milkshake
-milkshake_flavours = ["Oreo", "Caramel", "Matcha"]
-creams = ["Whipped Cream", "Chocolate Cream"]
-
-current_order = {}
-player_choice = {}
-
-order_count = 0
-max_orders = 3
-timer = 10
-
-buttons = []
 
 start_btn = next_btn = None
 play_btn = replay_btn = home_btn = next_btn_result = None
@@ -109,30 +92,6 @@ def draw_box(text, rect, color=(255,255,255), text_color=(0,0,0), font=font_smal
         text_rect = img.get_rect(center=rect.center)
 
     screen.blit(img, text_rect)
-
-#generate order
-def generate_order(level):
-
-    # LEVEL 4 & 5 = MILKSHAKE
-    if level >= 4:
-
-        order = {"milkshake": random.choice(milkshake_flavours)}
-
-        if level >= 5:
-            order["cream"] = random.choice(creams)
-
-        return order
-
-    # LEVEL 1-3 = ICE CREAM
-    order = {"flavour": random.choice(flavours)}
-
-    if level >= 2:
-        order["topping"] = random.choice(toppings)
-
-    if level >= 3:
-        order["container"] = random.choice(containers)
-
-    return order
 
 
 # Loop
@@ -196,20 +155,15 @@ while running:
 
             elif scene == 4 and start_btn_rect and start_btn_rect.collidepoint(mx, my):
 
-                scene = 5
-                current_order = generate_order(selected_level)
-                player_choice = {}
-                order_count = 0
-                timer = 10
+                import subprocess
+                import sys
+
+                game_path = os.path.join(PROJECT_DIR, "Lia's codes", "main_game_ui_with_orders.py")
+                subprocess.run([sys.executable, game_path])
 
         
-            # SCENE 5 → GAME INPUT
+            # SCENE 5 → GAME INPUT (Sambung dkt lia)
           
-            elif scene == 5:
-
-                for b_type, value, rect in buttons:
-                    if rect.collidepoint(mx, my):
-                        player_choice[b_type] = value
 
             # SCENE 6 → RESULT
     

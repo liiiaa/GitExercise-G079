@@ -1,9 +1,16 @@
 import pygame
 import os
+print(
+    "READING LEVEL FROM:",
+    os.path.abspath("current_level.txt")
+)
+import game_data
+import subprocess
+import sys
 
 WIDTH, HEIGHT = 1280, 720
-BASE_DIR = os.path.dirname(__file__)
-ASSETS_PATH = os.path.join(BASE_DIR, '..', 'Assets')
+SELECTED_LEVEL = 1
+ASSETS_PATH = "Assets"
 LEVELS_FOLDER = "Levels Assets" 
 BUTTONS_FOLDER = "Buttons Assets"
 
@@ -58,7 +65,9 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
     
     for i in range(4):
         level_num = start_level + i
-        if level_num > 25: break
+        if level_num > 5: break
+
+        locked = level_num > game_data.UNLOCKED_LEVEL
 
         rect = layout[f'slot_{i}']
         scoop_center = (rect.centerx, rect.centery + 10) 
@@ -79,6 +88,11 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
         text_surf = assets['font'].render(level_text, True, (255, 255, 255))
         outline_surf = assets['font'].render(level_text, True, (30, 30, 30))
         text_rect = text_surf.get_rect(center=number_center)
+
+        if locked:
+            locked_img = scoop_img.copy()
+            locked_img.fill((80, 80, 80, 180), special_flags=pygame.BLEND_RGBA_MULT)
+            screen.blit(locked_img, scoop_img.get_rect(center=scoop_center))
 
         off = 4
         screen.blit(outline_surf, (text_rect.x - off, text_rect.y - off))
@@ -109,17 +123,24 @@ def draw_level_selection_ui(screen, assets, mouse_pos, page):
 def test_selection_ui():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Level Select: 4 per page")
+    pygame.display.set_caption("Level Select")
     clock = pygame.time.Clock()
     
     all_assets = load_assets()
     if not all_assets: return
 
     current_page = 0
-    total_pages = 7
+    total_pages = 2
 
     running = True
     while running:
+
+        try: 
+            with open("save.txt", "r") as f:
+                game_data.UNLOCKED_LEVEL = int((f.read().strip()))
+        except:
+            pass
+
         if all_assets and 'background' in all_assets:
             screen.blit(all_assets['background'], (0, 0))
         else:
@@ -144,8 +165,30 @@ def test_selection_ui():
                 for i in range(4):
                     if layout[f'slot_{i}'].collidepoint(mouse_pos):
                         clicked_level = start_level + i
-                        if clicked_level <= 25:
-                            print(f"Starting Level {clicked_level}!")
+                        if clicked_level <= game_data.UNLOCKED_LEVEL:
+                        
+
+                            print("SELECTED LEVEL =", clicked_level)
+
+                            with open("current_level.txt", "w") as f:
+                                f.write(str(clicked_level))
+
+                            print("WROTE LEVEL =", clicked_level)
+
+                            game_data.CURRENT_LEVEL = clicked_level
+
+                            test_path = os.path.join(
+                                os.path.dirname(__file__),
+                                "TEST.py"
+                            )
+
+                            print("Trying to open:", test_path)
+                            
+                            subprocess.Popen(
+                                [sys.executable, test_path]
+                            )
+
+                            running = False
 
         draw_level_selection_ui(screen, all_assets, mouse_pos, current_page)
         
