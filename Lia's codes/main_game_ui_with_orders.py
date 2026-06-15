@@ -7,10 +7,14 @@ import random
 # INITIALIZATION
 # ==================================================
 pygame.init()
-SCREEN_W, SCREEN_H = 1920, 1200
+SCREEN_W, SCREEN_H = 1280, 720
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.DOUBLEBUF)
 pygame.display.set_caption("A Scoop of Spring")
 clock = pygame.time.Clock()
+
+BASE_W, BASE_H = 1920, 1200
+SCALE_X = SCREEN_W / BASE_W
+SCALE_Y = SCREEN_H / SCREEN_H
 
 try:
     font = pygame.font.SysFont("Comic Sans MS", 25, bold=True)
@@ -31,24 +35,37 @@ def load_img(name, size):
         return pygame.transform.scale(img, size)
     except:
         surf = pygame.Surface(size); surf.fill((255, 0, 255)); return surf
+    
+#SCALLING HELPER
+def scale(pos):
+    x,y = pos
+    return(int(x * SCALE_X), int(y * SCALE_Y))
+
+def scale_rect(rect):
+    return pygame.Rect(
+        int(rect.x * SCALE_X),
+        int(rect.y * SCALE_Y),
+        int(rect.width * SCALE_X),
+        int(rect.height * SCALE_Y))
+    
 
 # ==================================================
 # ASSETS & CONSTANTS
 # ==================================================
 bg_img = load_img("Game Background.png", (SCREEN_W, SCREEN_H))
-cone_bowl_img = load_img("Cone_bowl.png", (220, 150))
-cup_station_img = load_img("Cup.png", (150, 300))
-milk_liq_img = load_img("Milk_liq.png", (220, 280))
-char_smile_img = load_img("Char_smile.png", (420, 380))
-char_talk_img = load_img("Char_talk.png", (420, 380))
+cone_bowl_img = load_img("Cone_bowl.png", (int(220*SCALE_X), int(150*SCALE_Y)))
+cup_station_img = load_img("Cup.png", (int(250*SCALE_X), int(300*SCALE_Y)))
+milk_liq_img = load_img("Milk_liq.png", (int(220*SCALE_X), int(280*SCALE_Y)))
+char_smile_img = load_img("Char_smile.png", (int(420*SCALE_X), int(380*SCALE_Y)))
+char_talk_img = load_img("Char_talk.png", (int(420*SCALE_X), int(380*SCALE_Y)))
 
-RESET_RECT = pygame.Rect(1680, 1080, 200, 70)
-SERVE_BUTTON_RECT = pygame.Rect(860, 1080, 200, 70)
-SERVE_ZONE_RECT = pygame.Rect(760, 400, 400, 400)
+RESET_RECT = scale_rect(pygame.Rect(1680, 1080, 200, 70))
+SERVE_BUTTON_RECT = scale_rect(pygame.Rect(860, 1080, 200, 70))
+SERVE_ZONE_RECT = scale_rect(pygame.Rect(760, 400, 400, 400))
 
-BLENDER_BASE_POS = (1750, 350)
-CUP_STATION_POS = (100, 380)
-CONE_STATION_POS = (250, 480)
+BLENDER_BASE_POS = scale((1400, 200))
+CUP_STATION_POS = scale((100, 350))
+CONE_STATION_POS = scale((250, 480))
 TUB_SIZE = (220, 160)
 
 TOPPING_STATIONS = {
@@ -170,7 +187,7 @@ def check_service():
 # ==================================================
 # MAIN LOOP SETUP
 # ==================================================
-blender = Draggable("Blender", "Blender.png", (300, 550), BLENDER_BASE_POS, "blender")
+blender = Draggable("Blender", "Blender.png", (220, 400), BLENDER_BASE_POS, "blender")
 bottles = {n: Draggable(n, d["file"], d["size"], d["pos"], "bottle") for n, d in TOPPING_STATIONS.items() if d["type"]=="bottle"}
 bowls = {n: {"img": load_img(d["file"], d["size"]), "rect": load_img(d["file"], d["size"]).get_rect(center=d["pos"])} for n, d in TOPPING_STATIONS.items() if d["type"]=="bowl"}
 active_scoops, placed_items, held_item = [], [], None

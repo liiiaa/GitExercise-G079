@@ -6,7 +6,13 @@ import os
 # INITIALIZATION
 # ==================================================
 pygame.init()
-SCREEN_W, SCREEN_H = 1920, 1200
+
+SCREEN_W, SCREEN_H = 1280, 720
+BASE_W, BASE_H = 1920, 1200
+
+SCALE_X = SCREEN_W / BASE_W
+SCALE_Y = SCREEN_H / BASE_H
+
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.DOUBLEBUF)
 pygame.display.set_caption("A Scoop of Spring")
 clock = pygame.time.Clock()
@@ -25,34 +31,75 @@ def load_img(name, size):
         img = pygame.image.load(path).convert_alpha()
         return pygame.transform.scale(img, size)
     except:
-        surf = pygame.Surface(size); surf.fill((255, 0, 255)); return surf
+        surf = pygame.Surface(size)
+        surf.fill((255, 0, 255))
+        return surf
 
 # ==================================================
-# ASSETS & CONSTANTS
+# SCALING HELPERS
+# ==================================================
+def scale(pos):
+    x, y = pos
+    return (int(x * SCALE_X), int(y * SCALE_Y))
+
+def scale_rect(rect):
+    return pygame.Rect(
+        int(rect.x * SCALE_X),
+        int(rect.y * SCALE_Y),
+        int(rect.width * SCALE_X),
+        int(rect.height * SCALE_Y)
+    )
+
+# ==================================================
+# ASSETS
 # ==================================================
 bg_img = load_img("Game Background.png", (SCREEN_W, SCREEN_H))
-cone_bowl_img = load_img("Cone_bowl.png", (220, 150))
-cup_station_img = load_img("Cup.png", (150, 300))
-milk_liq_img = load_img("Milk_liq.png", (220, 280))
-char_smile_img = load_img("Char_smile.png", (420, 380))
-char_talk_img = load_img("Char_talk.png", (420, 380))
+
+cone_bowl_img = load_img("Cone_bowl.png", (int(220*SCALE_X), int(150*SCALE_Y)))
+cup_station_img = load_img("Cup.png", (int(150*SCALE_X), int(300*SCALE_Y)))
+milk_liq_img = load_img("Milk_liq.png", (int(220*SCALE_X), int(280*SCALE_Y)))
+char_smile_img = load_img("Char_smile.png", (int(420*SCALE_X), int(380*SCALE_Y)))
+char_talk_img = load_img("Char_talk.png", (int(420*SCALE_X), int(380*SCALE_Y)))
 chat_bubble_base = load_img("Chat_bubble.png", (350, 150))
 
-RESET_RECT = pygame.Rect(1680, 1080, 200, 70)
-BLENDER_BASE_POS = (1750, 350)
-CUP_STATION_POS = (100, 380)
-CONE_STATION_POS = (250, 480)
-TUB_SIZE = (220, 160)
+# ==================================================
+# CONSTANTS (SCALED)
+# ==================================================
+RESET_RECT = scale_rect(pygame.Rect(1680, 1080, 200, 70))
 
+BLENDER_BASE_POS = scale((1750, 350))
+CUP_STATION_POS = scale((100, 380))
+CONE_STATION_POS = scale((250, 480))
+
+SERVE_BUTTON_RECT = scale_rect(pygame.Rect(860, 1080, 200, 70))
+SERVE_ZONE_RECT = scale_rect(pygame.Rect(760, 400, 400, 400))
+
+TUB_SIZE = (int(220*SCALE_X), int(160*SCALE_Y))
+
+# ==================================================
+# TOPPING STATIONS (FIXED)
+# ==================================================
 TOPPING_STATIONS = {
-    "cream":    {"type": "bottle", "file": "Cream_bottle.png", "spawn": "Cream.png", "pos": (1200, 950), "size": (100, 280), "spawn_size": (160, 140), "offset": 90},
-    "milk":     {"type": "bottle", "file": "Milk.png",         "spawn": "Milk.png",  "pos": (1400, 950), "size": (150, 250), "spawn_size": (100, 100), "offset": 0},
-    "sprinkles":{"type": "bowl",   "file": "Sprinkles_bowl.png","spawn": "Sprinkles.png", "pos": (1180, 750), "size": (200, 140), "spawn_size": (120, 90), "offset": 100},
-    "cherry":   {"type": "bowl",   "file": "Cherry_bowl.png",   "spawn": "Cherry.png",    "pos": (1380, 750), "size": (200, 140), "spawn_size": (80, 80), "offset": 30}
+    "cream": {
+        "type": "bottle",
+        "file": "Cream_bottle.png",
+        "spawn": "Cream.png",
+        "pos": scale((1200, 950)),
+        "size": (int(100*SCALE_X), int(280*SCALE_Y)),
+        "spawn_size": (int(160*SCALE_X), int(140*SCALE_Y)),
+        "offset": int(90*SCALE_Y)
+    }
 }
 
+# ==================================================
+# FLAVORS
+# ==================================================
 FLAVORS = ["vanilla", "strawberry", "mango", "chocolate", "chocomint", "coffee"]
-FLAVOR_POS = [(250, 620), (500, 620), (750, 620), (250, 820), (500, 820), (750, 820)]
+
+FLAVOR_POS = [
+    scale((250, 620)), scale((500, 620)), scale((750, 620)),
+    scale((250, 820)), scale((500, 820)), scale((750, 820))
+]
 
 # ==================================================
 # CLASSES
