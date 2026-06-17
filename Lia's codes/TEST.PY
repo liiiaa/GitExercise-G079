@@ -47,10 +47,20 @@ cup_station_img = load_img("Cup.png", (150, 300))
 milk_liq_img = load_img("Milk_liq.png", (220, 280))
 char_smile_img = load_img("Char_smile.png", (420, 380))
 char_talk_img = load_img("Char_talk.png", (420, 380))
+exit_btn_img = load_img("Exit.png", (200, 100))
+guide_btn_img = load_img("Instruction.png", (200, 100))
+
+guide_screen_img = load_img(
+    "Instruction2.png",
+    (SCREEN_W, SCREEN_H)
+)
+
 
 RESET_RECT = pygame.Rect(1680, 1080, 200, 70)
 SERVE_BUTTON_RECT = pygame.Rect(860, 1080, 200, 70)
 SERVE_ZONE_RECT = pygame.Rect(760, 400, 400, 400)
+EXIT_BUTTON_RECT = pygame.Rect(20, 60, 100, 100)
+GUIDE_BUTTON_RECT = pygame.Rect(140, 60, 100, 100)
 
 BLENDER_BASE_POS = (1750, 350)
 CUP_STATION_POS = (100, 380)
@@ -602,6 +612,8 @@ def reset_items_only():
 
 generate_order()
 
+show_guide = False
+go_to_main_menu = False
 running = True
 go_to_level_select = False
 
@@ -613,7 +625,16 @@ while running:
         if event.type == pygame.QUIT: 
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
+
+            if GUIDE_BUTTON_RECT.collidepoint(mouse_pos):
+                show_guide = not show_guide
+
+            if EXIT_BUTTON_RECT.collidepoint(mouse_pos):
+                go_to_main_menu = True
+                running = False
+
             if RESET_RECT.collidepoint(mouse_pos): reset_items_only()
+
             if SERVE_BUTTON_RECT.collidepoint(mouse_pos) and customer.visible:
                 result = check_service()
 
@@ -790,9 +811,28 @@ while running:
         if held_item.type == "base": draw_treat(held_item)
         else: screen.blit(held_item.image, held_item.rect)
 
+    screen.blit(exit_btn_img, EXIT_BUTTON_RECT.topleft)
+    screen.blit(guide_btn_img, GUIDE_BUTTON_RECT.topleft)
+
+    if show_guide:
+        screen.blit(guide_screen_img, (0,0))
+
+
     pygame.display.flip()
+
     
 pygame.quit()
+
+if go_to_main_menu:
+
+    menu_path = os.path.join(
+        os.path.dirname(__file__),
+        "ui_layout.py"
+    )
+
+    subprocess.run(
+        [sys.executable, menu_path]
+    )
 
 if go_to_level_select:
     ui_path = os.path.join(
