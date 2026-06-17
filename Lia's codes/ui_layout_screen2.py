@@ -8,7 +8,7 @@ import game_data
 import subprocess
 import sys
 
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT = 1280, 720
 SELECTED_LEVEL = 1
 ASSETS_PATH = "Assets"
 LEVELS_FOLDER = "Levels Assets" 
