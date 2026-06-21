@@ -38,11 +38,11 @@ level_assets = load_level_assets()
 
 # Load Next Button
 next_btn_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Next button.png")).convert_alpha()
-next_btn_img = pygame.transform.scale(next_btn_img, (320, 160))
+next_btn_img = pygame.transform.scale(next_btn_img, (500, 250))
 
 # Load Start Button
 start_button_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Start button.png")).convert_alpha()
-start_button_img = pygame.transform.scale(start_button_img, (320, 160))
+start_button_img = pygame.transform.scale(start_button_img, (500, 250))
 
 # Load Character 
 char_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Main Game Assets", "char_smile.png")).convert_alpha()
@@ -158,7 +158,7 @@ while running:
                 import subprocess
                 import sys
 
-                game_path = os.path.join(PROJECT_DIR, "Lia's codes", "main_game_ui_with_orders.py")
+                game_path = os.path.join(PROJECT_DIR, "Lia's codes", "TEST.PY")
                 subprocess.run([sys.executable, game_path])
 
         
@@ -186,9 +186,9 @@ while running:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        logo_rect = ui_assets['logo'].get_rect(center=(WIDTH // 2, 350))
+        logo_rect = ui_assets['logo'].get_rect(center=(WIDTH // 2, 450))
 
-        start_button_rect = ui_assets['start_button'].get_rect(center=(WIDTH // 2, 620))
+        start_button_rect = ui_assets['start_button'].get_rect(center=(WIDTH // 2, 900))
 
         screen.blit(ui_assets['background'], (0,0))
 

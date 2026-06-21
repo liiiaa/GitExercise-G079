@@ -7,7 +7,7 @@ import random
 # INITIALIZATION
 # ==================================================
 pygame.init()
-SCREEN_W, SCREEN_H = 1280, 720
+SCREEN_W, SCREEN_H = 1920, 1080
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.DOUBLEBUF)
 pygame.display.set_caption("A Scoop of Spring")
 clock = pygame.time.Clock()
@@ -60,7 +60,7 @@ char_smile_img = load_img("Char_smile.png", (int(420*SCALE_X), int(380*SCALE_Y))
 char_talk_img = load_img("Char_talk.png", (int(420*SCALE_X), int(380*SCALE_Y)))
 
 RESET_RECT = scale_rect(pygame.Rect(1680, 1080, 200, 70))
-SERVE_BUTTON_RECT = scale_rect(pygame.Rect(860, 1080, 200, 70))
+SERVE_BUTTON_RECT = scale_rect(pygame.Rect(760, 400, 200, 70))
 SERVE_ZONE_RECT = scale_rect(pygame.Rect(760, 400, 400, 400))
 
 BLENDER_BASE_POS = scale((1400, 200))
