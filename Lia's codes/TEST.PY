@@ -31,6 +31,20 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(SCRIPT_DIR)
 ASSETS_PATH = os.path.join(PARENT_DIR, "Assets", "Main Game Assets")
 
+# link w aliya's codes
+sys.path.append(os.path.join(PARENT_DIR, "Aliya's codes"))
+
+from sound import play_music, play_sound_effect
+from score import calculate_score, get_score, reset_score
+from timing import start_level, update_timer, get_time, is_time_up
+
+MUSIC_FOLDER = os.path.join(PARENT_DIR, "Sound Tracks")
+
+GAMEPLAY_MUSIC = os.path.join(MUSIC_FOLDER, "gameplay.mp3")
+CORRECT_SOUND = os.path.join(MUSIC_FOLDER, "correct.mp3")
+WRONG_SOUND = os.path.join(MUSIC_FOLDER, "wrong.mp3")
+LEVEL_COMPLETE_SOUND = os.path.join(MUSIC_FOLDER, "level_complete.mp3")
+
 def load_img(name, size):
     path = os.path.join(ASSETS_PATH, name)
     try:
@@ -323,6 +337,8 @@ def check_service():
         ]
 
         if sorted(item_data, key=str) == sorted(expected, key=str):
+            play_sound_effect(CORRECT_SOUND)
+            calculate_score(True, get_time())
 
             chat_bubble.show("Amazing! Thank you!")
 
@@ -333,6 +349,7 @@ def check_service():
             orders_completed += 1
 
             if orders_completed >= 3:
+                play_sound_effect(LEVEL_COMPLETE_SOUND)
                 pygame.time.set_timer(
                     pygame.USEREVENT + 3,
                     2500
@@ -341,6 +358,8 @@ def check_service():
             pygame.time.set_timer(pygame.USEREVENT + 1, 2500)
 
         else:
+            play_sound_effect(WRONG_SOUND)
+            calculate_score(False, get_time())
             chat_bubble.show(
                 f"Incorrect... I wanted: {order_string}",
                 duration=5
@@ -381,6 +400,8 @@ def check_service():
         and actual_flavor == current_order["flavor"]
         and actual_toppings == current_order["toppings"]
     ):
+        play_sound_effect(CORRECT_SOUND)
+        calculate_score(True, get_time())
 
         chat_bubble.show("Yummy! Thank you!")
 
@@ -390,6 +411,7 @@ def check_service():
         orders_completed += 1
 
         if orders_completed >= 3:
+            play_sound_effect(LEVEL_COMPLETE_SOUND)
             pygame.time.set_timer(
                     pygame.USEREVENT + 3,
                     2500
@@ -401,6 +423,8 @@ def check_service():
         )
 
     else:
+        play_sound_effect(WRONG_SOUND)
+        calculate_score(False, get_time())
         chat_bubble.show(
             f"Incorrect... I wanted: {order_string}",
             duration=5
@@ -611,6 +635,10 @@ def reset_items_only():
     blender.liquid_flavor, blender.rect.center = None, BLENDER_BASE_POS
     for b in bottles.values(): b.rect.center = b.start_pos
 
+play_music(GAMEPLAY_MUSIC)
+reset_score()
+start_level(CURRENT_LEVEL)
+
 generate_order()
 
 show_guide = False
@@ -620,6 +648,7 @@ go_to_level_select = False
 
 while running:
     dt = clock.tick(60) / 1000
+    update_timer(dt)
     mouse_pos = pygame.mouse.get_pos()
     
     for event in pygame.event.get():
@@ -782,6 +811,12 @@ while running:
     pygame.draw.rect(screen, (100, 200, 100), SERVE_BUTTON_RECT, border_radius=15)
     screen.blit(font.render("SERVE", True, (255, 255, 255)), (SERVE_BUTTON_RECT.x + 50, SERVE_BUTTON_RECT.y + 15))
 
+    score_text = font.render(f"Score: {get_score()}", True, (255, 255, 255))
+    time_text = font.render(f"Time: {get_time()}", True, (255, 255, 255))
+    
+    screen.blit(score_text, (40, 180))
+    screen.blit(time_text, (40, 220))
+
     def draw_treat(treat):
         if treat.name == "Cup":
             if treat.liquid_flavor:
@@ -818,6 +853,9 @@ while running:
     if show_guide:
         screen.blit(guide_screen_img, (0,0))
 
+    if is_time_up():
+        chat_bubble.show("Time's up!")
+        pygame.time.set_timer(pygame.USEREVENT + 3, 1500)
 
     pygame.display.flip()
 

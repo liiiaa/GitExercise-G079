@@ -24,12 +24,24 @@ from ui_layout_screen2 import (
     get_level_ui_layout
 )
 
+# link w aliya's codes
+sys.path.append(os.path.join(PROJECT_DIR, "Aliya's codes"))
+
+from sound import play_music
+
 # Load assets
 game_bg = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Main Game Assets", "Game Background.png")).convert()
 ui_assets = load_assets()
 level_assets = load_level_assets()
 next_btn_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Next button.png")).convert_alpha()
 start_button_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Start button.png")).convert_alpha()
+
+# music tracks
+
+MUSIC_FOLDER = os.path.join(PROJECT_DIR, "Sound Tracks")
+MENU_MUSIC = os.path.join(MUSIC_FOLDER, "mainmenu.mp3")
+
+play_music(MENU_MUSIC)
 
 # Game variables
 scene = 1
@@ -99,6 +111,8 @@ while running:
             elif scene == 4 and start_btn_rect and start_btn_rect.collidepoint(mx, my):
                 import subprocess
                 game_path = os.path.join(PROJECT_DIR, "Lia's codes", "TEST.PY")
+                with open(os.path.join(PROJECT_DIR, "current_level.txt"), "w") as file:
+                    file.write(str(selected_level))
                 subprocess.run([sys.executable, game_path])
             elif scene == 6:
                 if replay_btn and replay_btn.collidepoint(mx, my):
