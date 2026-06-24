@@ -25,6 +25,12 @@ from ui_layout_screen2 import (
     get_level_ui_layout
 )
 
+# link w aliya's codes
+
+sys.path.append(os.path.join(PROJECT_DIR, "Aliya's codes"))
+
+from sound import play_music
+
 # Load Game Background
 game_bg = pygame.image.load(
     os.path.join(PROJECT_DIR, "Assets", "Main Game Assets", "Game Background.png")
@@ -35,6 +41,12 @@ game_bg = pygame.transform.scale(game_bg, (WIDTH, HEIGHT))
 # Load UI Assets
 ui_assets = load_assets()
 level_assets = load_level_assets()
+
+# Adding music
+MUSIC_FOLDER = os.path.join(PROJECT_DIR, "Sound Tracks")
+MENU_MUSIC = os.path.join(MUSIC_FOLDER, "mainmenu.mp3")
+
+play_music(MENU_MUSIC)
 
 # Load Next Button
 next_btn_img = pygame.image.load(os.path.join(PROJECT_DIR, "Assets", "Buttons Assets", "Next button.png")).convert_alpha()
@@ -159,6 +171,8 @@ while running:
                 import sys
 
                 game_path = os.path.join(PROJECT_DIR, "Lia's codes", "main_game_ui_with_orders.py")
+                with open(os.path.join(PROJECT_DIR, "current_level.txt"), "w") as file:
+                    file.write(str(selected_level))
                 subprocess.run([sys.executable, game_path])
 
         
