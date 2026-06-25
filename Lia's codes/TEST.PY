@@ -181,7 +181,7 @@ class ChatBubble:
     def __init__(self, speaker, font):
         self.speaker, self.font = speaker, font
         self.text, self.active, self.timer = "", False, 0
-    def show(self, message, duration=5):
+    def show(self, message, duration=15):
         self.text, self.active, self.timer = message, True, duration
         self.speaker.is_talking = True; self.speaker.talk_timer = duration
     def update(self, dt):
@@ -645,6 +645,7 @@ show_guide = False
 go_to_main_menu = False
 running = True
 go_to_level_select = False
+time_up_triggered = False
 
 while running:
     dt = clock.tick(60) / 1000
@@ -811,11 +812,11 @@ while running:
     pygame.draw.rect(screen, (100, 200, 100), SERVE_BUTTON_RECT, border_radius=15)
     screen.blit(font.render("SERVE", True, (255, 255, 255)), (SERVE_BUTTON_RECT.x + 50, SERVE_BUTTON_RECT.y + 15))
 
-    score_text = font.render(f"Score: {get_score()}", True, (255, 255, 255))
-    time_text = font.render(f"Time: {get_time()}", True, (255, 255, 255))
+    score_text = font.render(f"Score: {get_score()}", True, (139, 69, 19))
+    time_text = font.render(f"Time: {get_time()}", True, (139, 69, 19))
     
-    screen.blit(score_text, (40, 180))
-    screen.blit(time_text, (40, 220))
+    screen.blit(score_text, (830, 180))
+    screen.blit(time_text, (830, 220))
 
     def draw_treat(treat):
         if treat.name == "Cup":
@@ -853,9 +854,10 @@ while running:
     if show_guide:
         screen.blit(guide_screen_img, (0,0))
 
-    if is_time_up():
-        chat_bubble.show("Time's up!")
-        pygame.time.set_timer(pygame.USEREVENT + 3, 1500)
+    if is_time_up() and not time_up_triggered:
+        #chat_bubble.show("Time's up!")
+        pygame.time.set_timer(pygame.USEREVENT + 3, 100)
+        time_up_triggered = True
 
     pygame.display.flip()
 

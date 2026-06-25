@@ -1,10 +1,10 @@
 # level 1 - 60 sec, lvl 2 - 45 sec, lvl 3 (final level) - 30 sec
 level_times = {
     1: 60,
-    2: 45,
-    3: 30,
-    4: 25,
-    5: 20
+    2: 75,
+    3: 80,
+    4: 85,
+    5: 90
 }
 
 timer = 0
