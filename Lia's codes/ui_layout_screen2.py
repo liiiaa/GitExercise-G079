@@ -8,7 +8,7 @@ import game_data
 import subprocess
 import sys
 
-WIDTH, HEIGHT = 1920, 1200
+WIDTH, HEIGHT = 1280, 720
 SELECTED_LEVEL = 1
 ASSETS_PATH = "Assets"
 LEVELS_FOLDER = "Levels Assets" 
@@ -16,20 +16,24 @@ BUTTONS_FOLDER = "Buttons Assets"
 
 def get_level_ui_layout():
     layout = {}
+    center_x = WIDTH // 2
+    center_y = HEIGHT // 2
     
     positions = [
-        (80, 50), 
-        (320, 180), 
-        (80, 310), 
-        (320, 440)   
+        (center_x - 200, center_y - 250), 
+        (center_x + 200, center_y - 250), 
+        (center_x - 150, center_y + 40), 
+        (center_x + 250, center_y + 40)   
     ]
     
     for i in range(4):
         x, y = positions[i]
         layout[f'slot_{i}'] = pygame.Rect(x, y, 350, 350)
     
-    layout['prev_btn'] = pygame.Rect(80, 850, 250, 80)
-    layout['next_btn'] = pygame.Rect(380, 850, 250, 80)
+    btn_width, btn_height = 250, 80
+    btn_y = HEIGHT + 30
+    layout['prev_btn'] = pygame.Rect(center_x + 80, btn_y, btn_width, btn_height)
+    layout['next_btn'] = pygame.Rect(center_x + 380, btn_y, btn_width, btn_height)
     
     return layout
 

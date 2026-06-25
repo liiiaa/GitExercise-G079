@@ -71,8 +71,8 @@ guide_screen_img = load_img(
 )
 
 
-RESET_RECT = pygame.Rect(1680, 1080, 200, 70)
-SERVE_BUTTON_RECT = pygame.Rect(860, 1080, 200, 70)
+RESET_RECT = pygame.Rect(1680, 900, 200, 70)
+SERVE_BUTTON_RECT = pygame.Rect(60, 900, 200, 70)
 SERVE_ZONE_RECT = pygame.Rect(760, 400, 400, 400)
 EXIT_BUTTON_RECT = pygame.Rect(20, 60, 100, 100)
 GUIDE_BUTTON_RECT = pygame.Rect(140, 60, 100, 100)
@@ -865,8 +865,7 @@ pygame.quit()
 if go_to_main_menu:
 
     menu_path = os.path.join(
-        os.path.dirname(__file__),
-        "ui_layout.py"
+        os.path.dirname(__file__), "c:\\Users\\user\\MiniITProject\\GitExercise-G079\\Lia's codes\\MAIN(FINAL)"
     )
 
     subprocess.run(
