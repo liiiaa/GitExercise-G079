@@ -855,7 +855,7 @@ while running:
         screen.blit(guide_screen_img, (0,0))
 
     if is_time_up() and not time_up_triggered:
-        #chat_bubble.show("Time's up!")
+        chat_bubble.show("Time's up!")
         pygame.time.set_timer(pygame.USEREVENT + 3, 100)
         time_up_triggered = True
 
@@ -882,4 +882,5 @@ if go_to_level_select:
 
     subprocess.run([sys.executable, ui_path])
 
+pygame.quit()
 sys.exit()
