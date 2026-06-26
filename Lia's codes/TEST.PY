@@ -440,11 +440,11 @@ def show_completion_screen():
         80
     )
 
-    #level_select_rect = pygame.Rect(
-     #   SCREEN_W // 2 - 150,
-      #  SCREEN_H // 2 + 180,
-       # 300,
-        #80)
+    level_select_rect = pygame.Rect(
+        SCREEN_W // 2 - 150,
+        SCREEN_H // 2 + 180,
+        300,
+        80)
 
     running = True
 
@@ -593,23 +593,22 @@ def show_completion_screen():
                 button_rect.centery - button_text.get_height() // 2
             )
         )
-        #LEVEL SELCET PART
-        #pygame.draw.rect(
-        #    screen,
-         #   (120, 120, 220),
-          #  level_select_rect,
-           # border_radius=20)
+        pygame.draw.rect(
+            screen,
+            (120, 120, 220),
+            level_select_rect,
+            border_radius=20)
 
-        #level_select_text = font.render(
-         #   "LEVEL SELECT",
-          #  True,
-           # (255, 255, 255))
+        level_select_text = font.render(
+            "LEVEL SELECT",
+            True,
+            (255, 255, 255))
 
-        #screen.blit(
-         #   level_select_text,
-          #  (
-           #     level_select_rect.centerx - level_select_text.get_width() // 2,
-            #    level_select_rect.centery - level_select_text.get_height() // 2))
+        screen.blit(
+            level_select_text,
+            (
+                level_select_rect.centerx - level_select_text.get_width() // 2,
+                level_select_rect.centery - level_select_text.get_height() // 2))
 
         pygame.display.flip()
         clock.tick(60)
